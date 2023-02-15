@@ -16,7 +16,7 @@ public class SunshineATMBalance implements Balance {
     }
 
     @Override
-    public int getCurrent() {
+    public int remains() {
         return current;
     }
 

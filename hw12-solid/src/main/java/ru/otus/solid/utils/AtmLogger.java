@@ -25,11 +25,11 @@ public final class AtmLogger {
     }
 
     public static void logDeposit(int profit, Balance balance) {
-        log.info(String.format(operationFormat, "(+)", "Deposited", profit, balance.getCurrent()));
+        log.info(String.format(operationFormat, "(+)", "Deposited", profit, balance.remains()));
 
     }
 
     public static void logWithDraw(int cost, Balance balance) {
-        log.info(String.format(operationFormat, "(-)", "Withdraw", cost, balance.getCurrent()));
+        log.info(String.format(operationFormat, "(-)", "Withdraw", cost, balance.remains()));
     }
 }

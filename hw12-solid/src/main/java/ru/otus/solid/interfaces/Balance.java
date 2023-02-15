@@ -4,7 +4,7 @@ public interface Balance {
 
     static final int CAPACITY = 1_000_000;
 
-    int getCurrent();
+    int remains();
 
     void deposit(int profit);
 

@@ -32,7 +32,7 @@ public class SunshineATM implements ATM {
 
     @Override
     public int getBalance() {
-        return balance.getCurrent();
+        return balance.remains();
     }
 
 
