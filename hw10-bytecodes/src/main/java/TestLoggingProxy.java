@@ -10,6 +10,7 @@ public class TestLoggingProxy implements InvocationHandler {
 
     private final TestLoggingInterface proxy;
 
+
     public TestLoggingProxy() {
         original = new TestLogging();
         proxy = (TestLoggingInterface) Proxy.newProxyInstance(TestLoggingInterface.class.getClassLoader(),
@@ -21,18 +22,13 @@ public class TestLoggingProxy implements InvocationHandler {
         return proxy;
     }
 
-
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         Object invokeResult = method.invoke(original, args);
 
-        if (hasLogAnnotation(method)) printLog(method, argsAsString(args));
+        printLog(method, argsAsString(args));
 
         return invokeResult;
-    }
-
-    private boolean hasLogAnnotation(Method method) throws NoSuchMethodException {
-        return original.getClass().getDeclaredMethod(method.getName(), method.getParameterTypes()).isAnnotationPresent(Log.class);
     }
 
     private void printLog(Method method, String args) {
