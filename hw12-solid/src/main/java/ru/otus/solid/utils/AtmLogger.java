@@ -2,6 +2,7 @@ package ru.otus.solid.utils;
 
 import lombok.extern.slf4j.Slf4j;
 import ru.otus.solid.atm.ATMMeta;
+import ru.otus.solid.interfaces.Balance;
 
 @Slf4j
 public final class AtmLogger {
@@ -23,12 +24,12 @@ public final class AtmLogger {
                 meta.getContactCenter()));
     }
 
-    public static void logDeposit(int profit, int remains) {
-        log.info(String.format(operationFormat, "(+)", "Deposited", profit, remains));
+    public static void logDeposit(int profit, Balance balance) {
+        log.info(String.format(operationFormat, "(+)", "Deposited", profit, balance.getCurrent()));
 
     }
 
-    public static void logWithDraw(int cost, int remains) {
-        log.info(String.format(operationFormat, "(-)", "Withdraw", cost, remains));
+    public static void logWithDraw(int cost, Balance balance) {
+        log.info(String.format(operationFormat, "(-)", "Withdraw", cost, balance.getCurrent()));
     }
 }

@@ -23,12 +23,8 @@ public class SunshineATM implements ATM {
         AtmLogger.logInitializing();
 
         this.balance = new SunshineATMBalance();
-        this.meta = new ATMMeta.ATMMetaBuilder()
-                .corporation(getClass().getSimpleName())
-                .contactCenter(CONTACT_CENTER)
-                .version(VERSION)
-                .hardwareId(UUID.randomUUID().toString())
-                .build();
+        this.meta =
+                new ATMMeta.ATMMetaBuilder().corporation(getClass().getSimpleName()).contactCenter(CONTACT_CENTER).version(VERSION).hardwareId(UUID.randomUUID().toString()).build();
 
         AtmLogger.logBooted(meta);
     }
@@ -43,12 +39,12 @@ public class SunshineATM implements ATM {
     @Override
     public void store(int profit) {
         balance.deposit(profit);
-        AtmLogger.logDeposit(profit, balance.getCurrent());
+        AtmLogger.logDeposit(profit, balance);
     }
 
     @Override
     public void take(int cost) {
         balance.withdraw(cost);
-        AtmLogger.logWithDraw(cost, balance.getCurrent());
+        AtmLogger.logWithDraw(cost, balance);
     }
 }
