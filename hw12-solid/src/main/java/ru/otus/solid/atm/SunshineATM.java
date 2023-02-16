@@ -1,7 +1,6 @@
 package ru.otus.solid.atm;
 
 import lombok.*;
-import ru.otus.solid.exception.AmountExceededException;
 import ru.otus.solid.interfaces.ATM;
 import ru.otus.solid.interfaces.Balance;
 import ru.otus.solid.utils.AtmLogger;
@@ -45,9 +44,6 @@ public class SunshineATM implements ATM {
 
     @Override
     public void take(int cost) {
-        if (cost > balance.remains()) throw new AmountExceededException("The requested amount is not available at " +
-                "the ATM");
-
         balance.withdraw(cost);
         AtmLogger.logWithDraw(cost, balance);
     }

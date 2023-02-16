@@ -2,6 +2,7 @@ package ru.otus.solid.atm;
 
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import ru.otus.solid.exception.AmountExceededException;
 import ru.otus.solid.interfaces.Balance;
 
 
@@ -27,6 +28,9 @@ public class SunshineATMBalance implements Balance {
 
     @Override
     public void withdraw(int cost) {
+        if (cost > current) throw new AmountExceededException("The requested amount is not available at " +
+                "the ATM");
+        
         current -= cost;
     }
 }
