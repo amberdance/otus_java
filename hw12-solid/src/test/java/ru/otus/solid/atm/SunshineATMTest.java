@@ -7,7 +7,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.slf4j.LoggerFactory;
 import ru.otus.solid.exception.CapacityExhaustException;
-import ru.otus.solid.interfaces.ATM;
 import ru.otus.solid.utils.AtmLogger;
 
 import java.util.List;
@@ -16,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class SunshineATMTest {
 
-    private static ATM sunshineATM;
+    private static SunshineATM sunshineATM;
     private static List<ILoggingEvent> atmLogs;
 
     @BeforeAll
@@ -90,7 +89,14 @@ class SunshineATMTest {
         assertDoesNotThrow(() -> sunshineATM.take(1000));
         assertDoesNotThrow(() -> sunshineATM.take(5000));
         assertDoesNotThrow(() -> sunshineATM.take(6600));
+    }
 
+    @Test
+    void given500Nominal_whenTakeCash_thenBanknoteSlot500NominalWilDecrease() {
+        var countOfNominal100Before = sunshineATM.getBanknotes().getCountByNominal(Nominal.NOMINAL_500);
+        var taken = 500;
+        sunshineATM.take(500);
+        assertEquals(countOfNominal100Before, sunshineATM.getBanknotes().getCountByNominal(Nominal.NOMINAL_500) - 4);
     }
 
 }

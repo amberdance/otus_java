@@ -6,14 +6,14 @@ public enum Nominal {
     NOMINAL_1000(1000),
     NOMINAL_5000(5000);
 
-    private final int representation;
+    private final int value;
 
-    Nominal(int representation) {
-        this.representation = representation;
+    Nominal(int value) {
+        this.value = value;
     }
 
-    public int representation() {
-        return representation;
+    public int value() {
+        return value;
     }
 
 }

@@ -18,10 +18,10 @@ public class SunshineATMBanknotes implements BanknoteSlot {
     private final HashMap<Nominal, Integer> banknotes = new HashMap<>();
 
     public SunshineATMBanknotes() {
-        this.banknotes.put(Nominal.NOMINAL_100, DEFAULT_NOMINAL_COUNT);
-        this.banknotes.put(Nominal.NOMINAL_500, DEFAULT_NOMINAL_COUNT);
-        this.banknotes.put(Nominal.NOMINAL_1000, DEFAULT_NOMINAL_COUNT);
-        this.banknotes.put(Nominal.NOMINAL_5000, DEFAULT_NOMINAL_COUNT);
+        banknotes.put(Nominal.NOMINAL_100, DEFAULT_NOMINAL_COUNT);
+        banknotes.put(Nominal.NOMINAL_500, DEFAULT_NOMINAL_COUNT);
+        banknotes.put(Nominal.NOMINAL_1000, DEFAULT_NOMINAL_COUNT);
+        banknotes.put(Nominal.NOMINAL_5000, DEFAULT_NOMINAL_COUNT);
     }
 
     @Override
@@ -47,7 +47,7 @@ public class SunshineATMBanknotes implements BanknoteSlot {
     @Override
     public int getTotalSum() {
         AtomicInteger sum = new AtomicInteger();
-        banknotes.forEach((key, value) -> sum.set(value * key.representation()));
+        banknotes.forEach((key, value) -> sum.set(value * key.value()));
 
         return sum.intValue();
     }

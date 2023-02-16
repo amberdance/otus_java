@@ -37,4 +37,8 @@ public final class AtmLogger {
     public static void logExhaustMessage(int requested, int remains) {
         log.error(String.format(CapacityExhaustException.defaultMessage, requested, remains));
     }
+
+    public static void logRequestedBanknotesNotEnough() {
+        log.error("Cannot withdraw requested banknotes because slot is empty. Please reduce requested sum");
+    }
 }
