@@ -4,6 +4,7 @@ import lombok.*;
 import ru.otus.solid.exception.CashExceedsCapacityException;
 import ru.otus.solid.interfaces.ATM;
 import ru.otus.solid.interfaces.Balance;
+import ru.otus.solid.interfaces.BanknoteSlot;
 import ru.otus.solid.utils.AtmLogger;
 
 import java.util.UUID;
@@ -17,14 +18,16 @@ public class SunshineATM implements ATM {
     public static String VERSION = "1.02";
     @Setter(AccessLevel.NONE)
     private ATMMeta meta;
+    private final BanknoteSlot slots;
     private final Balance balance;
 
 
     public SunshineATM() {
         AtmLogger.logInitializing();
 
-        this.balance = new SunshineATMBalance();
-        this.meta =
+        slots = new SunshineATMBanknotes();
+        balance = new SunshineATMBalance(slots.getTotalSum());
+        meta =
                 new ATMMeta.ATMMetaBuilder().corporation(getClass().getSimpleName()).contactCenter(CONTACT_CENTER).version(VERSION).hardwareId(UUID.randomUUID().toString()).build();
 
         AtmLogger.logBooted(meta);

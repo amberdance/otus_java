@@ -11,8 +11,9 @@ public class SunshineATMBalance implements Balance {
 
     private int current;
 
-    public SunshineATMBalance() {
-        this.current = CAPACITY;
+
+    public SunshineATMBalance(int initialCapacity) {
+        this.current = initialCapacity;
     }
 
     @Override

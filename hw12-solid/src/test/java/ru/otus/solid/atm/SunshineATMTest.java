@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.LoggerFactory;
 import ru.otus.solid.exception.CashExceedsCapacityException;
 import ru.otus.solid.interfaces.ATM;
-import ru.otus.solid.interfaces.Balance;
 import ru.otus.solid.utils.AtmLogger;
 
 import java.util.List;
@@ -39,7 +38,8 @@ class SunshineATMTest {
 
     @Test
     void givenATM_whenBooted_thenBalanceShouldEqualsInitialCapacity() {
-        assertEquals(Balance.CAPACITY, new SunshineATM().getBalance());
+        var atm = new SunshineATM();
+        assertEquals(atm.getSlots().getTotalSum(), atm.getBalance());
     }
 
     @Test
@@ -65,7 +65,7 @@ class SunshineATMTest {
 
     @Test
     void givenSomeCash_whenCapacityExceed_thenThrewException() {
-        assertThrows(CashExceedsCapacityException.class, () -> sunshineATM.take(Balance.CAPACITY * 2));
+        assertThrows(CashExceedsCapacityException.class, () -> sunshineATM.take(sunshineATM.getBalance() * 2));
     }
 
     @Test
