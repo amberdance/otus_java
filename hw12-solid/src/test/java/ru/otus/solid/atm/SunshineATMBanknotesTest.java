@@ -9,7 +9,7 @@ import ru.otus.solid.interfaces.BanknoteSlot;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class SunshineATMSlotsTest {
+class SunshineATMBanknotesTest {
 
     private static BanknoteSlot slots;
 
