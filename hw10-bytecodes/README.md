@@ -2,19 +2,19 @@
 
 #### Разработайте такой функционал:
 
-метод класса можно пометить самодельной аннотацией `@Log`, например, так:
+метод класса можно пометить самодельной аннотацией `@ru.otus.Log`, например, так:
 
-    class TestLogging implements TestLoggingInterface {
-        @Log
-        public void calculation(int param) {};
-    }
+`class ru.otus.TestLogging implements ru.otus.TestLoggingInterface {
+@ru.otus.Log
+public void calculation(int param) {};
+}`
 
 При вызове этого метода "автомагически" в консоль должны логироваться значения параметров.
 Например так.
 
     class Demo {
         public void action() {
-            new TestLogging().calculation(6);
+            new ru.otus.TestLogging().calculation(6);
         }
     }
 

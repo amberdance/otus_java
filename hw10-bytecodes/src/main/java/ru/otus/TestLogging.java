@@ -1,3 +1,5 @@
+package ru.otus;
+
 public class TestLogging implements TestLoggingInterface {
 
 
@@ -18,5 +20,11 @@ public class TestLogging implements TestLoggingInterface {
     public void calculation(int a, int b, int c) {
 
     }
+
+    @Override
+    public void calculation(int a, int b, int c, int d) {
+
+    }
+
 
 }
