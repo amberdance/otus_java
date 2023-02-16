@@ -3,8 +3,8 @@ package ru.otus.solid.atm;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import ru.otus.solid.exception.NotEnoughBanknotesException;
+import ru.otus.solid.exception.UnsupportedBanknoteException;
 import ru.otus.solid.interfaces.BanknoteSlot;
-import ru.otus.solid.interfaces.Nominal;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -117,11 +117,11 @@ class SunshineATMSlotsTest {
 
     @Test
     void testTakeCannotAcceptZeroBanknotes() {
-        assertThrows(IllegalArgumentException.class, () -> slots.take(Nominal.NOMINAL_5000, 0));
+        assertThrows(UnsupportedBanknoteException.class, () -> slots.take(Nominal.NOMINAL_5000, 0));
     }
 
     @Test
     void testPutCannotAcceptZeroBanknotes() {
-        assertThrows(IllegalArgumentException.class, () -> slots.put(Nominal.NOMINAL_5000, 0));
+        assertThrows(UnsupportedBanknoteException.class, () -> slots.put(Nominal.NOMINAL_5000, 0));
     }
 }

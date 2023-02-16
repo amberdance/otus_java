@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.LoggerFactory;
 import ru.otus.solid.exception.CashExceedsCapacityException;
 import ru.otus.solid.interfaces.ATM;
-import ru.otus.solid.interfaces.Nominal;
 import ru.otus.solid.utils.AtmLogger;
 
 import java.util.List;

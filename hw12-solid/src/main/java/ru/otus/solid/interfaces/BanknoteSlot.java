@@ -1,5 +1,6 @@
 package ru.otus.solid.interfaces;
 
+import ru.otus.solid.atm.Nominal;
 import ru.otus.solid.exception.NotEnoughBanknotesException;
 
 public interface BanknoteSlot {
@@ -10,8 +11,6 @@ public interface BanknoteSlot {
 
 
     int getCountByNominal(Nominal nominal);
-
-    int getSumByNominal(Nominal nominal);
 
     int getTotalSum();
 

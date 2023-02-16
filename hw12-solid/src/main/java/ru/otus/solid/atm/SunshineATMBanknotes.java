@@ -1,17 +1,15 @@
 package ru.otus.solid.atm;
 
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
 import lombok.ToString;
 import ru.otus.solid.exception.NotEnoughBanknotesException;
+import ru.otus.solid.exception.UnsupportedBanknoteException;
 import ru.otus.solid.interfaces.BanknoteSlot;
-import ru.otus.solid.interfaces.Nominal;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-@Getter
 @EqualsAndHashCode
 @ToString
 public class SunshineATMBanknotes implements BanknoteSlot {
@@ -28,7 +26,7 @@ public class SunshineATMBanknotes implements BanknoteSlot {
 
     @Override
     public void take(Nominal nominal, int requestedBanknotes) throws NotEnoughBanknotesException {
-        if (requestedBanknotes == 0) throw new IllegalArgumentException();
+        if (requestedBanknotes == 0) throw new UnsupportedBanknoteException();
 
         var remainsBanknotes = getCountByNominal(nominal);
         if (requestedBanknotes > remainsBanknotes) throw new NotEnoughBanknotesException();
@@ -38,7 +36,7 @@ public class SunshineATMBanknotes implements BanknoteSlot {
 
     @Override
     public void put(Nominal nominal, int count) {
-        if (count == 0) throw new IllegalArgumentException();
+        if (count == 0) throw new UnsupportedBanknoteException();
 
         banknotes.put(nominal, banknotes.get(nominal) + count);
     }
@@ -46,11 +44,6 @@ public class SunshineATMBanknotes implements BanknoteSlot {
     @Override
     public int getCountByNominal(Nominal nominal) {
         return banknotes.entrySet().stream().filter(entry -> entry.getKey().equals(nominal)).mapToInt(Map.Entry::getValue).findFirst().orElse(-1);
-    }
-
-    @Override
-    public int getSumByNominal(Nominal nominal) {
-        return banknotes.entrySet().stream().filter(entry -> entry.getKey().equals(nominal)).map(Map.Entry::getValue).reduce(0, Integer::sum);
     }
 
     @Override

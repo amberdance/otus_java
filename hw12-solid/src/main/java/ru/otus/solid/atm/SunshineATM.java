@@ -7,7 +7,6 @@ import ru.otus.solid.exception.CashExceedsCapacityException;
 import ru.otus.solid.interfaces.ATM;
 import ru.otus.solid.interfaces.Balance;
 import ru.otus.solid.interfaces.BanknoteSlot;
-import ru.otus.solid.interfaces.Nominal;
 import ru.otus.solid.utils.AtmLogger;
 
 import java.util.UUID;
@@ -43,6 +42,7 @@ public class SunshineATM implements ATM {
 
     @Override
     public void store(Nominal... nominals) {
+        // TODO: 16.02.2023 maybe add another method to deal with map of nominals
         var profit = 0;
 
         for (Nominal nominal : nominals) {
