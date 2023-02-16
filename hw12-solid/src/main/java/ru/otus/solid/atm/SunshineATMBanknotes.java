@@ -54,7 +54,7 @@ public class SunshineATMBanknotes implements BanknoteSlot {
 
     @Override
     public int getTotalSlots() {
-        return banknotes.values().stream().reduce(0, Integer::sum);
+        return banknotes.values().stream().mapToInt(Integer::valueOf).sum();
     }
 
     private boolean requestedBanknotesNotPresent(int count) {
