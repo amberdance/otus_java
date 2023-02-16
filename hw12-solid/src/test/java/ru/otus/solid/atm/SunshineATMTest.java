@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.LoggerFactory;
 import ru.otus.solid.exception.CashExceedsCapacityException;
 import ru.otus.solid.interfaces.ATM;
+import ru.otus.solid.interfaces.Nominal;
 import ru.otus.solid.utils.AtmLogger;
 
 import java.util.List;
@@ -39,7 +40,7 @@ class SunshineATMTest {
     @Test
     void givenATM_whenBooted_thenBalanceShouldEqualsInitialCapacity() {
         var atm = new SunshineATM();
-        assertEquals(atm.getSlots().getTotalSum(), atm.getBalance());
+        assertEquals(atm.getBanknotes().getTotalSum(), atm.getBalance());
     }
 
     @Test
@@ -50,36 +51,30 @@ class SunshineATMTest {
 
 
     @Test
-    void givenSomeCash_whenDeposited_thenBalanceWillIncreaseSameExact() {
-        var profit = 6000;
+    void givenEachNominalBanknote_whenDeposited_thenBalanceWillIncreaseProportional() {
+        var profit = 6600;
         var balanceBeforeDeposit = sunshineATM.getBalance();
-        var balanceAfterDeposit = mockDeposit(profit);
+        sunshineATM.store(Nominal.NOMINAL_100, Nominal.NOMINAL_500, Nominal.NOMINAL_1000, Nominal.NOMINAL_5000);
 
+        var balanceAfterDeposit = sunshineATM.getBalance();
         assertEquals(profit, balanceAfterDeposit - balanceBeforeDeposit);
     }
 
-    private int mockDeposit(int profit) {
-        sunshineATM.store(profit);
-        return sunshineATM.getBalance();
-    }
-
     @Test
-    void givenSomeCash_whenCapacityExceed_thenThrewException() {
-        assertThrows(CashExceedsCapacityException.class, () -> sunshineATM.take(sunshineATM.getBalance() * 2));
-    }
-
-    @Test
-    void givenSomeCash_whenWithdraw_thenBalanceWillDecreaseSameExact() {
+    void givenSomeCash_whenWithdraw_thenBalanceWillDecreaseProportional() {
         var difference = 10000;
         var balanceBeforeDeposit = sunshineATM.getBalance();
-        var balanceAfterDeposit = mockWithdraw(difference);
+
+        sunshineATM.take(difference);
+        var balanceAfterDeposit = sunshineATM.getBalance();
 
         assertEquals(difference, balanceBeforeDeposit - balanceAfterDeposit);
     }
 
-    private int mockWithdraw(int cost) {
-        sunshineATM.take(cost);
-        return sunshineATM.getBalance();
+
+    @Test
+    void givenAmountOfCash_whenCapacityExceed_thenThrewException() {
+        assertThrows(CashExceedsCapacityException.class, () -> sunshineATM.take(sunshineATM.getBalance() * 2));
     }
 
 }

@@ -9,7 +9,7 @@ public interface ATM {
 
     ATMMeta getMeta();
 
-    void store(int profit);
+    void store(Nominal... nominals);
 
     void take(int cost);
 

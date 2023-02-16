@@ -20,7 +20,8 @@ public final class AtmLogger {
 
     public static void logBooted(ATMMeta meta) {
         log.info(String.format("@%s corp.%n" + "--Version: %s%n" + "--SunshineATM id: %s%n" + "Call %s if you have a "
-                + "troubles" + ".Have a nice day!", meta.getCorporation(), meta.getVersion(), meta.getHardwareId(),
+                        + "troubles" + ".Have a nice day!", meta.getCorporation(), meta.getVersion(),
+                meta.getHardwareId(),
                 meta.getContactCenter()));
     }
 
@@ -29,7 +30,7 @@ public final class AtmLogger {
 
     }
 
-    public static void logWithDraw(int cost, Balance balance) {
+    public static void logWithdraw(int cost, Balance balance) {
         log.info(String.format(operationFormat, "(-)", "Withdraw", cost, balance.remains()));
     }
 
