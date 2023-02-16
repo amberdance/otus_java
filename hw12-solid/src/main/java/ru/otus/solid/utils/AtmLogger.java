@@ -2,6 +2,7 @@ package ru.otus.solid.utils;
 
 import lombok.extern.slf4j.Slf4j;
 import ru.otus.solid.atm.ATMMeta;
+import ru.otus.solid.exception.CashExceedsCapacityException;
 import ru.otus.solid.interfaces.Balance;
 
 @Slf4j
@@ -18,9 +19,8 @@ public final class AtmLogger {
     }
 
     public static void logBooted(ATMMeta meta) {
-        log.info(String.format("@%s corp.%n" + "--Version: %s%n" + "--SunshineATM id: %s%n" + "Call %s if you have a " +
-                        "troubles" +
-                        ".Have a nice day!", meta.getCorporation(), meta.getVersion(), meta.getHardwareId(),
+        log.info(String.format("@%s corp.%n" + "--Version: %s%n" + "--SunshineATM id: %s%n" + "Call %s if you have a "
+                + "troubles" + ".Have a nice day!", meta.getCorporation(), meta.getVersion(), meta.getHardwareId(),
                 meta.getContactCenter()));
     }
 
@@ -31,5 +31,9 @@ public final class AtmLogger {
 
     public static void logWithDraw(int cost, Balance balance) {
         log.info(String.format(operationFormat, "(-)", "Withdraw", cost, balance.remains()));
+    }
+
+    public static void logCashExceedsCapacity(int requested, int remains) {
+        log.error(String.format(CashExceedsCapacityException.cashExceedsMessage, requested, remains));
     }
 }

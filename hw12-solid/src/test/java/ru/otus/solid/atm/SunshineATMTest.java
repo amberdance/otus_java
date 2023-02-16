@@ -6,7 +6,7 @@ import ch.qos.logback.core.read.ListAppender;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.slf4j.LoggerFactory;
-import ru.otus.solid.exception.AmountExceededException;
+import ru.otus.solid.exception.CashExceedsCapacityException;
 import ru.otus.solid.interfaces.ATM;
 import ru.otus.solid.interfaces.Balance;
 import ru.otus.solid.utils.AtmLogger;
@@ -78,6 +78,6 @@ class SunshineATMTest {
 
     @Test
     void givenSomeCash_whenExceedingCapacity_thenThrewAmountExceededException() {
-        assertThrows(AmountExceededException.class, () -> sunshineATM.take(Balance.CAPACITY * 2));
+        assertThrows(CashExceedsCapacityException.class, () -> sunshineATM.take(Balance.CAPACITY * 2));
     }
 }
