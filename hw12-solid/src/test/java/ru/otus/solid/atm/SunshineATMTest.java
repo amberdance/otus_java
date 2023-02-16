@@ -50,7 +50,7 @@ class SunshineATMTest {
 
 
     @Test
-    void givenEachNominalBanknote_whenDeposited_thenBalanceWillIncreaseProportional() {
+    void givenEachNominalBanknote_whenDeposited_thenBalanceWillIncrease() {
         var profit = 6600;
         var balanceBeforeDeposit = sunshineATM.getBalance();
         sunshineATM.store(Nominal.NOMINAL_100, Nominal.NOMINAL_500, Nominal.NOMINAL_1000, Nominal.NOMINAL_5000);
@@ -60,7 +60,7 @@ class SunshineATMTest {
     }
 
     @Test
-    void givenSomeCash_whenWithdraw_thenBalanceWillDecreaseProportional() {
+    void givenSomeCash_whenWithdraw_thenBalanceWillDecrease() {
         var difference = 10000;
         var balanceBeforeDeposit = sunshineATM.getBalance();
 
@@ -74,6 +74,23 @@ class SunshineATMTest {
     @Test
     void givenAmountOfCash_whenCapacityExceed_thenThrewException() {
         assertThrows(CapacityExhaustException.class, () -> sunshineATM.take(sunshineATM.getBalance() * 2));
+    }
+
+    @Test
+    void givenNotMultipleSum_whenTakeCash_thenThrewException() {
+        assertThrows(IllegalArgumentException.class, () -> sunshineATM.take(66666));
+    }
+
+    @Test
+    void givenMultipleSum_whenTakeCash_thenBalanceWillDecrease() {
+        assertDoesNotThrow(() -> sunshineATM.take(100));
+        assertDoesNotThrow(() -> sunshineATM.take(200));
+        assertDoesNotThrow(() -> sunshineATM.take(500));
+        assertDoesNotThrow(() -> sunshineATM.take(900));
+        assertDoesNotThrow(() -> sunshineATM.take(1000));
+        assertDoesNotThrow(() -> sunshineATM.take(5000));
+        assertDoesNotThrow(() -> sunshineATM.take(6600));
+
     }
 
 }

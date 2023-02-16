@@ -56,16 +56,23 @@ public class SunshineATM implements ATM {
 
     @Override
     public void take(int cost) {
+        if (cost % Nominal.NOMINAL_100.representation() != 0)
+            throw new IllegalArgumentException("Requested sum " + "should be multiple to " + Nominal.NOMINAL_100.representation());
+
         int remains = balance.remains();
 
         if (cost > remains) {
             AtmLogger.logExhaustMessage(cost, remains);
-            throw new CapacityExhaustException(String.format(CapacityExhaustException.defaultMessage,
-                    cost, remains));
+            throw new CapacityExhaustException(String.format(CapacityExhaustException.defaultMessage, cost, remains));
         }
 
         balance.withdraw(cost);
         AtmLogger.logWithdraw(cost, balance);
     }
 
+    private void optimizeWithdraw(int cost) {
+        if (cost < Nominal.NOMINAL_100.representation()) {
+
+        }
+    }
 }

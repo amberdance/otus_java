@@ -45,9 +45,7 @@ class SunshineATMBanknotesTest {
         countOfNominalAfter = mockTakeBanknotes(Nominal.NOMINAL_5000, takenCount);
 
         assertEquals(countOfNominalBefore, countOfNominalAfter + takenCount);
-
     }
-
 
     private int mockTakeBanknotes(Nominal nominal, int count) {
         var slots = new SunshineATMBanknotes();
