@@ -1,4 +1,4 @@
-package ru.otus.solid.model;
+package ru.otus.solid.atm;
 
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.spi.ILoggingEvent;
@@ -6,7 +6,6 @@ import ch.qos.logback.core.read.ListAppender;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.slf4j.LoggerFactory;
-import ru.otus.solid.atm.SunshineATM;
 import ru.otus.solid.interfaces.ATM;
 import ru.otus.solid.interfaces.Balance;
 import ru.otus.solid.utils.AtmLogger;
