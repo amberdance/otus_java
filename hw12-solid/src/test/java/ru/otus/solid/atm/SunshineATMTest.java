@@ -33,23 +33,24 @@ class SunshineATMTest {
     }
 
     @Test
-    void givenATM_whenBooted_showMetaLogs() {
+    void givenATM_whenBooted_thenShowMetaLogs() {
         assertTrue(atmLogs.size() >= 2);
     }
 
     @Test
-    void givenFirmwareId_whenATMIBooted_showSameFirmwareId() {
-        var firmwareId = sunshineATM.getMeta().getHardwareId();
-        assertTrue(atmLogs.get(1).getFormattedMessage().contains(firmwareId));
-    }
-
-    @Test
-    void givenATM_whenBooted_balanceEqualsInitialCapacity() {
+    void givenATM_whenBooted_thenBalanceShouldEqualsInitialCapacity() {
         assertEquals(Balance.CAPACITY, new SunshineATM().getBalance());
     }
 
     @Test
-    void givenSomeCash_whenDeposited_balanceWillIncreaseSameExact() {
+    void givenFirmwareId_whenATMBooted_thenShowSameFirmwareId() {
+        var firmwareId = sunshineATM.getMeta().getHardwareId();
+        assertTrue(atmLogs.get(1).getFormattedMessage().contains(firmwareId));
+    }
+
+
+    @Test
+    void givenSomeCash_whenDeposited_thenBalanceWillIncreaseSameExact() {
         var profit = 6000;
         var balanceBeforeDeposit = sunshineATM.getBalance();
         var balanceAfterDeposit = mockDeposit(profit);
@@ -63,7 +64,12 @@ class SunshineATMTest {
     }
 
     @Test
-    void givenSomeCash_whenWithdraw_balanceWillDecreaseSameExact() {
+    void givenSomeCash_whenCapacityExceed_thenThrewException() {
+        assertThrows(CashExceedsCapacityException.class, () -> sunshineATM.take(Balance.CAPACITY * 2));
+    }
+
+    @Test
+    void givenSomeCash_whenWithdraw_thenBalanceWillDecreaseSameExact() {
         var difference = 10000;
         var balanceBeforeDeposit = sunshineATM.getBalance();
         var balanceAfterDeposit = mockWithdraw(difference);
@@ -76,8 +82,4 @@ class SunshineATMTest {
         return sunshineATM.getBalance();
     }
 
-    @Test
-    void givenSomeCash_whenExceedingCapacity_thenThrewAmountExceededException() {
-        assertThrows(CashExceedsCapacityException.class, () -> sunshineATM.take(Balance.CAPACITY * 2));
-    }
 }
