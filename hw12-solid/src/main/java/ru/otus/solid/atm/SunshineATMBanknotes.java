@@ -26,17 +26,15 @@ public class SunshineATMBanknotes implements BanknoteSlot {
 
     @Override
     public void take(Nominal nominal, int requestedBanknotes) throws NotEnoughBanknotesException {
-        if (requestedBanknotes == 0) throw new UnsupportedBanknoteException();
-
-        var remainsBanknotes = getCountByNominal(nominal);
-        if (requestedBanknotes > remainsBanknotes) throw new NotEnoughBanknotesException();
+        if (requestedBanknotesNotPresent(requestedBanknotes)) throw new UnsupportedBanknoteException();
+        if (requestedBanknotesExceed(requestedBanknotes, nominal)) throw new NotEnoughBanknotesException();
 
         banknotes.put(nominal, banknotes.get(nominal) - requestedBanknotes);
     }
 
     @Override
     public void put(Nominal nominal, int count) {
-        if (count == 0) throw new UnsupportedBanknoteException();
+        if (requestedBanknotesNotPresent(count)) throw new UnsupportedBanknoteException();
 
         banknotes.put(nominal, banknotes.get(nominal) + count);
     }
@@ -59,5 +57,12 @@ public class SunshineATMBanknotes implements BanknoteSlot {
         return banknotes.values().stream().reduce(0, Integer::sum);
     }
 
+    private boolean requestedBanknotesNotPresent(int count) {
+        return count == 0;
+    }
+
+    private boolean requestedBanknotesExceed(int requested, Nominal nominal) {
+        return requested > getCountByNominal(nominal);
+    }
 
 }

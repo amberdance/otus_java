@@ -67,4 +67,5 @@ public class SunshineATM implements ATM {
         balance.withdraw(cost);
         AtmLogger.logWithdraw(cost, balance);
     }
+
 }
