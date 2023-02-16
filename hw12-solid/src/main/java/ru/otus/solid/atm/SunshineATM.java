@@ -3,7 +3,7 @@ package ru.otus.solid.atm;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
-import ru.otus.solid.exception.CashExceedsCapacityException;
+import ru.otus.solid.exception.CapacityExhaustException;
 import ru.otus.solid.interfaces.ATM;
 import ru.otus.solid.interfaces.Balance;
 import ru.otus.solid.interfaces.BanknoteSlot;
@@ -59,8 +59,8 @@ public class SunshineATM implements ATM {
         int remains = balance.remains();
 
         if (cost > remains) {
-            AtmLogger.logCashExceedsCapacity(cost, remains);
-            throw new CashExceedsCapacityException(String.format(CashExceedsCapacityException.cashExceedsMessage,
+            AtmLogger.logExhaustMessage(cost, remains);
+            throw new CapacityExhaustException(String.format(CapacityExhaustException.defaultMessage,
                     cost, remains));
         }
 
