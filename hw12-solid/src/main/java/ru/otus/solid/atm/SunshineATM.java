@@ -10,19 +10,16 @@ import ru.otus.solid.interfaces.Balance;
 import ru.otus.solid.interfaces.BanknoteSlot;
 import ru.otus.solid.utils.AtmLogger;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Getter
 @ToString
 @EqualsAndHashCode
 public class SunshineATM implements ATM {
 
-    public static String CONTACT_CENTER = " 8-666-66-66";
-    public static String VERSION = "1.02";
-
+    public static String CONTACT_CENTER = "8-666-66-66";
+    public static String VERSION = "1.03";
     private final ATMMeta meta;
     private final BanknoteSlot banknotes;
     private final Balance balance;
@@ -44,8 +41,7 @@ public class SunshineATM implements ATM {
     }
 
     @Override
-    public void store(Nominal... nominals) {
-        // TODO: 16.02.2023 maybe add another method to deal with map of nominals
+    public void put(Nominal... nominals) {
         var profit = 0;
 
         for (Nominal nominal : nominals) {
@@ -53,73 +49,51 @@ public class SunshineATM implements ATM {
             profit += nominal.value();
         }
 
-        takeBanknotes(profit);
         balance.deposit(profit);
         AtmLogger.logDeposit(profit, balance);
     }
 
     @Override
-    public void take(int cost) {
-        if (cost % Nominal.NOMINAL_100.value() != 0)
-            throw new IllegalArgumentException("Requested sum " + "should be multiple to " + Nominal.NOMINAL_100.value());
+    public void take(int cash) {
+        validateOperation(cash);
+
+        try {
+            takeBanknotes(new OptimizationStrategy(banknotes.getEmptySlots(), cash));
+            balance.withdraw(cash);
+            AtmLogger.logWithdraw(cash, balance);
+        } catch (NotEnoughBanknotesException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void validateOperation(int cash) {
+        if (!requestedCashDividedClearlyByMinimalNominal(cash))
+            throw new IllegalArgumentException("Requested sum should clearly divided by " + Nominal.N_50.value());
 
         int remains = balance.remains();
 
-        if (cost > remains) {
-            AtmLogger.logExhaustMessage(cost, remains);
-            throw new CapacityExhaustException(String.format(CapacityExhaustException.defaultMessage, cost, remains));
+        if (cash > remains) {
+            AtmLogger.logExhaustMessage(cash, remains);
+            throw new CapacityExhaustException(String.format(CapacityExhaustException.defaultMessage, cash, remains));
         }
-
-        takeBanknotes(cost);
-        balance.withdraw(cost);
-        AtmLogger.logWithdraw(cost, balance);
     }
 
-    private void takeBanknotes(int cost) {
-        Map<Nominal, Integer> banknotesTable = new HashMap<>();
+    private void takeBanknotes(OptimizationStrategy strategy) throws NotEnoughBanknotesException {
+        Map<Nominal, Integer> result = strategy.optimizeByDivideNominals().getResult();
 
-        for (Nominal nominal : Nominal.values()) {
-            banknotesTable.put(nominal, 0);
-        }
-
-        do {
-            if (cost % 5000 == 0) {
-                banknotesTable.put(Nominal.NOMINAL_5000, banknotesTable.get(Nominal.NOMINAL_5000) + 1);
-                cost -= 5000;
-                continue;
-            }
-
-            if (cost % 1000 == 0) {
-                banknotesTable.put(Nominal.NOMINAL_1000, banknotesTable.get(Nominal.NOMINAL_1000) + 1);
-                cost -= 1000;
-                continue;
-            }
-            if (cost % 500 == 0) {
-                banknotesTable.put(Nominal.NOMINAL_500, banknotesTable.get(Nominal.NOMINAL_500) + 1);
-                cost -= 500;
-                continue;
-            }
-
-            if (cost % 100 == 0) {
-                banknotesTable.put(Nominal.NOMINAL_100, banknotesTable.get(Nominal.NOMINAL_100) + 1);
-                cost -= 100;
-            }
-
-        } while (cost > 0);
-
-        banknotesTable =
-                banknotesTable.entrySet().stream().filter(entry -> entry.getValue() > 0).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-
-        System.out.println(banknotesTable);
-
-        for (Map.Entry<Nominal, Integer> entry : banknotesTable.entrySet()) {
+        for (var entry : result.entrySet()) {
             try {
                 banknotes.take(entry.getKey(), entry.getValue());
             } catch (NotEnoughBanknotesException e) {
-                AtmLogger.logRequestedBanknotesNotEnough();
-                e.printStackTrace();
+                var requestedCash = entry.getKey().value() * entry.getValue();
+                AtmLogger.logRequestedCountNotEnough(requestedCash);
+                throw new NotEnoughBanknotesException();
             }
         }
+    }
+
+    private boolean requestedCashDividedClearlyByMinimalNominal(int cash) {
+        return cash % Nominal.N_50.value() == 0;
     }
 }
 

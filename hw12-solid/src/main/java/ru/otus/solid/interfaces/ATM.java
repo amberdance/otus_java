@@ -10,8 +10,8 @@ public interface ATM {
 
     ATMMeta getMeta();
 
-    void store(Nominal... nominals);
+    void put(Nominal... nominals);
 
-    void take(int cost);
+    void take(int cash);
 
 }

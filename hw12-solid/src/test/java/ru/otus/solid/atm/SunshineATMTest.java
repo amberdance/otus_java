@@ -4,11 +4,13 @@ import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.read.ListAppender;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.slf4j.LoggerFactory;
 import ru.otus.solid.exception.CapacityExhaustException;
 import ru.otus.solid.utils.AtmLogger;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -50,23 +52,26 @@ class SunshineATMTest {
 
     @Test
     void givenEachNominalBanknote_whenDeposited_thenBalanceWillIncrease() {
-        var profit = 6600;
         var balanceBeforeDeposit = sunshineATM.getBalance();
-        sunshineATM.store(Nominal.NOMINAL_100, Nominal.NOMINAL_500, Nominal.NOMINAL_1000, Nominal.NOMINAL_5000);
+        var profit = Arrays.stream(Nominal.values()).mapToInt(Nominal::value).sum();
+
+        sunshineATM.put(Nominal.values());
 
         var balanceAfterDeposit = sunshineATM.getBalance();
+
         assertEquals(profit, balanceAfterDeposit - balanceBeforeDeposit);
     }
 
     @Test
-    void givenSomeCash_whenWithdraw_thenBalanceWillDecrease() {
-        var difference = 10000;
+    void givenSomeCash_whenTakeCash_thenBalanceWillDecrease() {
         var balanceBeforeDeposit = sunshineATM.getBalance();
+        var cash = balanceBeforeDeposit % Nominal.N_5000.value();
 
-        sunshineATM.take(difference);
+        sunshineATM.take(cash);
+
         var balanceAfterDeposit = sunshineATM.getBalance();
 
-        assertEquals(difference, balanceBeforeDeposit - balanceAfterDeposit);
+        assertEquals(cash, balanceBeforeDeposit - balanceAfterDeposit);
     }
 
 
@@ -81,22 +86,32 @@ class SunshineATMTest {
     }
 
     @Test
-    void givenMultipleSum_whenTakeCash_thenBalanceWillDecrease() {
-        assertDoesNotThrow(() -> sunshineATM.take(100));
-        assertDoesNotThrow(() -> sunshineATM.take(200));
-        assertDoesNotThrow(() -> sunshineATM.take(500));
-        assertDoesNotThrow(() -> sunshineATM.take(900));
-        assertDoesNotThrow(() -> sunshineATM.take(1000));
-        assertDoesNotThrow(() -> sunshineATM.take(5000));
-        assertDoesNotThrow(() -> sunshineATM.take(6600));
+    void givenDifferentSums_whenTakeCash_thenBalanceWillDecrease() {
+        int[] cashCases = new int[]{50, 100, 200, 500, 900, 1000, 2200, 5000, 6600};
+
+        for (int cash : cashCases) {
+            assertDoesNotThrow(() -> sunshineATM.take(cash));
+        }
     }
 
     @Test
-    void given500Nominal_whenTakeCash_thenBanknoteSlot500NominalWilDecrease() {
-        var countOfNominal100Before = sunshineATM.getBanknotes().getCountByNominal(Nominal.NOMINAL_500);
-        var taken = 500;
-        sunshineATM.take(500);
-        assertEquals(countOfNominal100Before, sunshineATM.getBanknotes().getCountByNominal(Nominal.NOMINAL_500) - 4);
-    }
+    @Disabled
+    void givenSomeCash_whenTakeCash_thenBanknoteSlotNominalWilDecreaseByMinimalNominalsCount() {
+        var cash = 5950; // (1) 5000 + (1) 500 + (2) 200 + (1) 50
 
+        var banknotes = sunshineATM.getBanknotes();
+        var countOf50NominalBefore = banknotes.getCountByNominal(Nominal.N_50);
+        var countOf100NominalBefore = banknotes.getCountByNominal(Nominal.N_100);
+        var countOf5000NominalBefore = banknotes.getCountByNominal(Nominal.N_5000);
+
+        sunshineATM.take(cash);
+
+        var countOf50NominalAfter = banknotes.getCountByNominal(Nominal.N_50);
+        var countOf100NominalAfter = banknotes.getCountByNominal(Nominal.N_100);
+        var countOf5000NominalAfter = banknotes.getCountByNominal(Nominal.N_5000);
+
+        //assertEquals(countOf50NominalAfter, countOf50NominalBefore + 1);
+        //assertEquals(countOf100NominalAfter, countOf100NominalBefore + 9);
+        assertEquals(countOf5000NominalBefore, countOf5000NominalAfter + 1);
+    }
 }

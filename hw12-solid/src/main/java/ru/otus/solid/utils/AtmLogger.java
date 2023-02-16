@@ -19,9 +19,8 @@ public final class AtmLogger {
     }
 
     public static void logBooted(ATMMeta meta) {
-        log.info(String.format("@%s corp.%n" + "--Version: %s%n" + "--SunshineATM id: %s%n" + "Call %s if you have a "
-                        + "troubles" + ".Have a nice day!", meta.getCorporation(), meta.getVersion(),
-                meta.getHardwareId(),
+        log.info(String.format("@%s corp.%n" + "--Version: %s%n" + "--ATM id: %s%n" + "Call %s if you have a " +
+                "troubles" + ". Have a nice day!", meta.getCorporation(), meta.getVersion(), meta.getHardwareId(),
                 meta.getContactCenter()));
     }
 
@@ -38,7 +37,7 @@ public final class AtmLogger {
         log.error(String.format(CapacityExhaustException.defaultMessage, requested, remains));
     }
 
-    public static void logRequestedBanknotesNotEnough() {
-        log.error("Cannot withdraw requested banknotes because slot is empty. Please reduce requested sum");
+    public static void logRequestedCountNotEnough(int requestedCash) {
+        log.error("Cannot withdraw {} because slot is empty. Please reduce requested sum", requestedCash);
     }
 }

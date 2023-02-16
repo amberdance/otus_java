@@ -1,10 +1,13 @@
 package ru.otus.solid.atm;
 
 public enum Nominal {
-    NOMINAL_100(100),
-    NOMINAL_500(500),
-    NOMINAL_1000(1000),
-    NOMINAL_5000(5000);
+    N_50(50),
+    N_100(100),
+    N_200(200),
+    N_500(500),
+    N_1000(1000),
+    N_2000(2000),
+    N_5000(5000);
 
     private final int value;
 

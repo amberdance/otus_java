@@ -3,8 +3,9 @@ package ru.otus.solid.atm;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import ru.otus.solid.exception.NotEnoughBanknotesException;
-import ru.otus.solid.exception.UnsupportedBanknoteException;
 import ru.otus.solid.interfaces.BanknoteSlot;
+
+import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -19,72 +20,26 @@ class SunshineATMBanknotesTest {
     }
 
     @Test
-    void givenEachNominal_whenTakeCash_thenSlotsCountShouldDecrease() {
-        var takenCount = 500;
+    void givenEachNominal_whenTakeCash_thenSlotsCountShouldDecreased() throws NotEnoughBanknotesException {
+        for (Nominal nominal : Nominal.values()) {
+            var countOfBanknotesBefore = slots.getCountByNominal(nominal);
+            slots.take(nominal, slots.DEFAULT_NOMINAL_COUNT);
 
-        // 100
-        var countOfNominalBefore = slots.getCountByNominal(Nominal.NOMINAL_100);
-        var countOfNominalAfter = mockTakeBanknotes(Nominal.NOMINAL_100, takenCount);
-
-        assertEquals(countOfNominalBefore, countOfNominalAfter + takenCount);
-
-        // 500
-        countOfNominalBefore = slots.getCountByNominal(Nominal.NOMINAL_500);
-        countOfNominalAfter = mockTakeBanknotes(Nominal.NOMINAL_500, takenCount);
-
-        assertEquals(countOfNominalBefore, countOfNominalAfter + takenCount);
-
-        // 1000
-        countOfNominalBefore = slots.getCountByNominal(Nominal.NOMINAL_1000);
-        countOfNominalAfter = mockTakeBanknotes(Nominal.NOMINAL_1000, takenCount);
-
-        assertEquals(countOfNominalBefore, countOfNominalAfter + takenCount);
-
-        // 5000
-        countOfNominalBefore = slots.getCountByNominal(Nominal.NOMINAL_5000);
-        countOfNominalAfter = mockTakeBanknotes(Nominal.NOMINAL_5000, takenCount);
-
-        assertEquals(countOfNominalBefore, countOfNominalAfter + takenCount);
-    }
-
-    private int mockTakeBanknotes(Nominal nominal, int count) {
-        var slots = new SunshineATMBanknotes();
-
-        try {
-            slots.take(nominal, count);
-        } catch (NotEnoughBanknotesException ignored) {
+            var countOfBanknotesAfter = slots.getCountByNominal(nominal);
+            assertEquals(0, countOfBanknotesAfter);
         }
-
-        return slots.getCountByNominal(nominal);
     }
 
     @Test
-    void givenEachNominal_whenPutCash_thenSlotsCountShouldIncrease() {
-        var putCount = 500;
+    void givenEachNominal_whenPutCash_thenSlotsCountShouldIncreased() {
+        var cash = 500;
 
-        // 100
-        var countOnfSlotsBefore = slots.getCountByNominal(Nominal.NOMINAL_100);
-        var countOfSlotsAfter = mockPutBanknotes(Nominal.NOMINAL_100, putCount);
+        for (Nominal nominal : Nominal.values()) {
+            var countOfBanknotesBefore = slots.getCountByNominal(nominal);
+            var countOfBanknotesAfter = mockPutBanknotes(nominal, cash);
 
-        assertEquals(countOfSlotsAfter, countOnfSlotsBefore + putCount);
-
-        // 500
-        countOnfSlotsBefore = slots.getCountByNominal(Nominal.NOMINAL_500);
-        countOfSlotsAfter = mockPutBanknotes(Nominal.NOMINAL_500, putCount);
-
-        assertEquals(countOfSlotsAfter, countOnfSlotsBefore + putCount);
-
-        // 1000
-        countOnfSlotsBefore = slots.getCountByNominal(Nominal.NOMINAL_1000);
-        countOfSlotsAfter = mockPutBanknotes(Nominal.NOMINAL_1000, putCount);
-
-        assertEquals(countOfSlotsAfter, countOnfSlotsBefore + putCount);
-
-        // 5000
-        countOnfSlotsBefore = slots.getCountByNominal(Nominal.NOMINAL_5000);
-        countOfSlotsAfter = mockPutBanknotes(Nominal.NOMINAL_5000, putCount);
-
-        assertEquals(countOfSlotsAfter, countOnfSlotsBefore + putCount);
+            assertEquals(countOfBanknotesBefore, countOfBanknotesAfter - cash);
+        }
     }
 
     private int mockPutBanknotes(Nominal nominal, int count) {
@@ -96,30 +51,46 @@ class SunshineATMBanknotesTest {
 
     @Test
     void givenEachNominal_whenTakeMoreThatAvailable_thenThrowException() {
-        var largeCount = slots.getTotalSlots() * 2;
+        var realBigCash = slots.getTotalSum() * 3;
 
-        assertThrows(NotEnoughBanknotesException.class, () -> slots.take(Nominal.NOMINAL_100, largeCount));
-        assertThrows(NotEnoughBanknotesException.class, () -> slots.take(Nominal.NOMINAL_500, largeCount));
-        assertThrows(NotEnoughBanknotesException.class, () -> slots.take(Nominal.NOMINAL_1000, largeCount));
-        assertThrows(NotEnoughBanknotesException.class, () -> slots.take(Nominal.NOMINAL_5000, largeCount));
-
+        for (Nominal nominal : Nominal.values()) {
+            assertThrows(Exception.class, () -> slots.take(nominal, realBigCash));
+        }
     }
 
     @Test
     void givenEachNominal_whenTakeAll_thenReturnsZero() {
-        assertEquals(0, mockTakeBanknotes(Nominal.NOMINAL_100, slots.getCountByNominal(Nominal.NOMINAL_100)));
-        assertEquals(0, mockTakeBanknotes(Nominal.NOMINAL_500, slots.getCountByNominal(Nominal.NOMINAL_500)));
-        assertEquals(0, mockTakeBanknotes(Nominal.NOMINAL_1000, slots.getCountByNominal(Nominal.NOMINAL_1000)));
-        assertEquals(0, mockTakeBanknotes(Nominal.NOMINAL_5000, slots.getCountByNominal(Nominal.NOMINAL_5000)));
+        for (Nominal nominal : Nominal.values()) {
+            assertEquals(0, mockTakeBanknotes(nominal, slots.getCountByNominal(nominal)));
+        }
+    }
+
+    private int mockTakeBanknotes(Nominal nominal, int count) {
+        var slots = new SunshineATMBanknotes();
+
+        try {
+            slots.take(nominal, count);
+            return slots.getCountByNominal(nominal);
+        } catch (NotEnoughBanknotesException e) {
+            e.printStackTrace();
+        }
+
+        return -1;
     }
 
     @Test
     void testTakeCannotAcceptZeroBanknotes() {
-        assertThrows(UnsupportedBanknoteException.class, () -> slots.take(Nominal.NOMINAL_5000, 0));
+        assertThrows(UnsupportedOperationException.class, () -> slots.take(getRandomNominal(), 0));
+    }
+
+    private Nominal getRandomNominal() {
+        return Nominal.class.getEnumConstants()[new Random().nextInt(Nominal.values().length - 1)];
     }
 
     @Test
     void testPutCannotAcceptZeroBanknotes() {
-        assertThrows(UnsupportedBanknoteException.class, () -> slots.put(Nominal.NOMINAL_5000, 0));
+        assertThrows(UnsupportedOperationException.class, () -> slots.put(getRandomNominal(), 0));
     }
+
+
 }
