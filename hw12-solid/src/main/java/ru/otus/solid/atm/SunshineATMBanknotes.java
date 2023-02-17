@@ -23,8 +23,8 @@ public class SunshineATMBanknotes implements BanknoteSlot {
 
     @Override
     public void take(Nominal nominal, int requestedCount) throws NotEnoughBanknotesException {
-        if (requestedCountIsZero(requestedCount)) throw new UnsupportedOperationException("Count on banknotes must be" +
-                " greater than zero");
+        if (requestedCountIsZero(requestedCount))
+            throw new UnsupportedOperationException("Count on banknotes must be" + " greater than zero");
         if (requestedCountExceed(nominal, requestedCount)) throw new NotEnoughBanknotesException();
 
         slots.put(nominal, slots.get(nominal) - requestedCount);

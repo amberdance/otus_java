@@ -3,7 +3,7 @@ package ru.otus.solid.atm;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
-import ru.otus.solid.exception.CapacityExhaustException;
+import ru.otus.solid.exception.CapacityExhaustedException;
 import ru.otus.solid.exception.NotEnoughBanknotesException;
 import ru.otus.solid.interfaces.ATM;
 import ru.otus.solid.interfaces.Balance;
@@ -18,8 +18,8 @@ import java.util.UUID;
 @EqualsAndHashCode
 public class SunshineATM implements ATM {
 
-    public static String CONTACT_CENTER = "8-666-66-66";
-    public static String VERSION = "1.03";
+    public static String CONTACT_CENTER = "8-666-666-666";
+    public static String VERSION = "1.04";
     private final ATMMeta meta;
     private final BanknoteSlot banknotes;
     private final Balance balance;
@@ -74,7 +74,8 @@ public class SunshineATM implements ATM {
 
         if (cash > remains) {
             AtmLogger.logExhaustMessage(cash, remains);
-            throw new CapacityExhaustException(String.format(CapacityExhaustException.defaultMessage, cash, remains));
+            throw new CapacityExhaustedException(String.format(CapacityExhaustedException.defaultMessage, cash,
+                    remains));
         }
     }
 
@@ -82,10 +83,13 @@ public class SunshineATM implements ATM {
         var result = strategy.optimize().getResult();
 
         for (var entry : result.entrySet()) {
+            var nominal = entry.getKey();
+            var banknotesCount = entry.getValue();
+
             try {
-                banknotes.take(entry.getKey(), entry.getValue());
+                banknotes.take(nominal, banknotesCount);
             } catch (NotEnoughBanknotesException e) {
-                var requestedCash = entry.getKey().value() * entry.getValue();
+                var requestedCash = nominal.value() * banknotesCount;
                 AtmLogger.logRequestedCountNotEnough(requestedCash);
                 throw new NotEnoughBanknotesException();
             }
