@@ -1,4 +1,4 @@
-package ru.otus.solid.common;
+package ru.otus.solid.atm;
 
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -15,4 +15,5 @@ public class AtmMeta {
     @NonNull String version;
     String contactCenter;
     @NonNull String corporation;
+    
 }

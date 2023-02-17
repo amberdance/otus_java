@@ -3,7 +3,6 @@ package ru.otus.solid.atm;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
-import ru.otus.solid.common.AtmMeta;
 import ru.otus.solid.common.Banknote;
 import ru.otus.solid.common.DivisionByReminderStrategy;
 import ru.otus.solid.exception.CapacityExhaustedException;

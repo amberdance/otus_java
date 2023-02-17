@@ -1,7 +1,7 @@
 package ru.otus.solid.utils;
 
 import lombok.extern.slf4j.Slf4j;
-import ru.otus.solid.common.AtmMeta;
+import ru.otus.solid.atm.AtmMeta;
 import ru.otus.solid.exception.CapacityExhaustedException;
 import ru.otus.solid.interfaces.Balance;
 

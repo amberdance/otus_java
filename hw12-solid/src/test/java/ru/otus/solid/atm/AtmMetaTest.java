@@ -1,7 +1,6 @@
 package ru.otus.solid.atm;
 
 import org.junit.jupiter.api.Test;
-import ru.otus.solid.common.AtmMeta;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
