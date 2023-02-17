@@ -2,17 +2,15 @@ package ru.otus.solid.atm;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.Map;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class OptimizationStrategyTest {
+class DivisionReminderStrategyTest {
 
     @Test
     void testDivisionWithRemainder() {
         var givenCash = 10950;
-        var strategy = new OptimizationStrategy(givenCash);
-        Map<Nominal, Integer> slots = strategy.divisionWithRemainder().getResult();
+        var strategy = new DivisionByReminderStrategy(givenCash);
+        var slots = strategy.optimize().getResult();
 
         assertEquals(slots.get(Nominal.N_5000), 2);
         assertEquals(slots.get(Nominal.N_500), 1);

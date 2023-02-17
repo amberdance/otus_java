@@ -2,24 +2,25 @@ package ru.otus.solid.atm;
 
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import ru.otus.solid.interfaces.OptimizationStrategy;
 
 import java.util.HashMap;
 import java.util.Map;
 
 @ToString
 @EqualsAndHashCode
-public class OptimizationStrategy {
+public class DivisionByReminderStrategy implements OptimizationStrategy<Nominal, Integer> {
 
     private final Map<Nominal, Integer> slots = new HashMap<>();
     private int requestedCash;
 
-    public OptimizationStrategy(int requestedCash) {
+    public DivisionByReminderStrategy(int requestedCash) {
         this.requestedCash = requestedCash;
     }
 
     /**
      * Решение не лучшее, хотелось бы применить разделяй и властвуй, но власти и опыта.
-     * Принципе работы:
+     * Принцип работы:
      * Сумма к снятию - 26000.
      * На каждой итерации по отсортированным в порядке убывания номиналам (важно) (5000, 2000, 1000 и тд) делается
      * проверка:
@@ -33,7 +34,8 @@ public class OptimizationStrategy {
      * - 25000 / (текущий номинал) = 5 (кол-во купюр)
      * - 25000 - 25000 = 0 (остатков не осталось, выход из цикла)
      */
-    public OptimizationStrategy divisionWithRemainder() {
+    @Override
+    public OptimizationStrategy<Nominal, Integer> optimize() {
         for (Nominal nominal : Nominal.valuesReversed()) {
             if (requestedCash == 0) break;
 
@@ -53,6 +55,7 @@ public class OptimizationStrategy {
         return this;
     }
 
+    @Override
     public Map<Nominal, Integer> getResult() {
         return slots;
     }

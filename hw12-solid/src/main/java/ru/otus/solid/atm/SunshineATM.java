@@ -8,9 +8,9 @@ import ru.otus.solid.exception.NotEnoughBanknotesException;
 import ru.otus.solid.interfaces.ATM;
 import ru.otus.solid.interfaces.Balance;
 import ru.otus.solid.interfaces.BanknoteSlot;
+import ru.otus.solid.interfaces.OptimizationStrategy;
 import ru.otus.solid.utils.AtmLogger;
 
-import java.util.Map;
 import java.util.UUID;
 
 @Getter
@@ -58,7 +58,7 @@ public class SunshineATM implements ATM {
         validateOperation(cash);
 
         try {
-            takeBanknotes(new OptimizationStrategy(cash));
+            takeBanknotes(new DivisionByReminderStrategy(cash));
             balance.withdraw(cash);
             AtmLogger.logWithdraw(cash, balance);
         } catch (NotEnoughBanknotesException e) {
@@ -78,8 +78,8 @@ public class SunshineATM implements ATM {
         }
     }
 
-    private void takeBanknotes(OptimizationStrategy strategy) throws NotEnoughBanknotesException {
-        Map<Nominal, Integer> result = strategy.divisionWithRemainder().getResult();
+    private void takeBanknotes(OptimizationStrategy<Nominal, Integer> strategy) throws NotEnoughBanknotesException {
+        var result = strategy.optimize().getResult();
 
         for (var entry : result.entrySet()) {
             try {
