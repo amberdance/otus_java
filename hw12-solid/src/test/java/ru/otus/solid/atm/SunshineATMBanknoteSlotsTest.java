@@ -22,8 +22,7 @@ class SunshineATMBanknoteSlotsTest {
 
     @Test
     void givenEachNominal_whenTakeCash_thenSlotsCountShouldDecreased() throws NotEnoughBanknotesException {
-        for (Banknote banknote : Banknote.values()) {
-            var countOfBanknotesBefore = slots.getCountByNominal(banknote);
+        for (var banknote : Banknote.values()) {
             slots.withdrawBanknotes(banknote, slots.DEFAULT_NOMINAL_COUNT);
 
             var countOfBanknotesAfter = slots.getCountByNominal(banknote);
@@ -33,13 +32,13 @@ class SunshineATMBanknoteSlotsTest {
 
     @Test
     void givenEachNominal_whenPutCash_thenSlotsCountShouldIncreased() {
-        var cash = 500;
+        var count = 500;
 
         for (Banknote banknote : Banknote.values()) {
             var countOfBanknotesBefore = slots.getCountByNominal(banknote);
-            var countOfBanknotesAfter = mockPutBanknotes(banknote, cash);
+            var countOfBanknotesAfter = mockPutBanknotes(banknote, count);
 
-            assertEquals(countOfBanknotesBefore, countOfBanknotesAfter - cash);
+            assertEquals(countOfBanknotesBefore, countOfBanknotesAfter - count);
         }
     }
 
