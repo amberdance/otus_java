@@ -58,7 +58,7 @@ public class SunshineATM implements ATM {
         validateOperation(cash);
 
         try {
-            takeBanknotes(new OptimizationStrategy(banknotes.getEmptySlots(), cash));
+            takeBanknotes(new OptimizationStrategy(cash));
             balance.withdraw(cash);
             AtmLogger.logWithdraw(cash, balance);
         } catch (NotEnoughBanknotesException e) {
@@ -79,7 +79,7 @@ public class SunshineATM implements ATM {
     }
 
     private void takeBanknotes(OptimizationStrategy strategy) throws NotEnoughBanknotesException {
-        Map<Nominal, Integer> result = strategy.optimizeByDivideNominals().getResult();
+        Map<Nominal, Integer> result = strategy.divisionWithRemainder().getResult();
 
         for (var entry : result.entrySet()) {
             try {
