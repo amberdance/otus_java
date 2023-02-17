@@ -23,7 +23,7 @@ class SunshineATMBanknoteSlotsTest {
     void givenEachNominal_whenTakeCash_thenSlotsCountShouldDecreased() throws NotEnoughBanknotesException {
         for (Banknote banknote : Banknote.values()) {
             var countOfBanknotesBefore = slots.getCountByNominal(banknote);
-            slots.take(banknote, slots.DEFAULT_NOMINAL_COUNT);
+            slots.withdrawBanknotes(banknote, slots.DEFAULT_NOMINAL_COUNT);
 
             var countOfBanknotesAfter = slots.getCountByNominal(banknote);
             assertEquals(0, countOfBanknotesAfter);
@@ -44,7 +44,7 @@ class SunshineATMBanknoteSlotsTest {
 
     private int mockPutBanknotes(Banknote banknote, int count) {
         var slots = new SunshineATMBanknoteSlots();
-        slots.put(banknote, count);
+        slots.depositBanknotes(banknote, count);
 
         return slots.getCountByNominal(banknote);
     }
@@ -54,7 +54,7 @@ class SunshineATMBanknoteSlotsTest {
         var realBigCash = slots.getTotalSum() * 3;
 
         for (Banknote banknote : Banknote.values()) {
-            assertThrows(Exception.class, () -> slots.take(banknote, realBigCash));
+            assertThrows(Exception.class, () -> slots.withdrawBanknotes(banknote, realBigCash));
         }
     }
 
@@ -69,7 +69,7 @@ class SunshineATMBanknoteSlotsTest {
         var slots = new SunshineATMBanknoteSlots();
 
         try {
-            slots.take(banknote, count);
+            slots.withdrawBanknotes(banknote, count);
             return slots.getCountByNominal(banknote);
         } catch (NotEnoughBanknotesException e) {
             e.printStackTrace();
@@ -80,7 +80,7 @@ class SunshineATMBanknoteSlotsTest {
 
     @Test
     void testTakeCannotAcceptZeroBanknotes() {
-        assertThrows(UnsupportedOperationException.class, () -> slots.take(getRandomNominal(), 0));
+        assertThrows(UnsupportedOperationException.class, () -> slots.withdrawBanknotes(getRandomNominal(), 0));
     }
 
     private Banknote getRandomNominal() {
@@ -89,7 +89,7 @@ class SunshineATMBanknoteSlotsTest {
 
     @Test
     void testPutCannotAcceptZeroBanknotes() {
-        assertThrows(UnsupportedOperationException.class, () -> slots.put(getRandomNominal(), 0));
+        assertThrows(UnsupportedOperationException.class, () -> slots.depositBanknotes(getRandomNominal(), 0));
     }
 
     @Test

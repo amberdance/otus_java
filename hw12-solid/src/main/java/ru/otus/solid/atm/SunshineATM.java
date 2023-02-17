@@ -11,6 +11,7 @@ import ru.otus.solid.interfaces.BanknoteSlots;
 import ru.otus.solid.interfaces.OptimizationStrategy;
 import ru.otus.solid.utils.AtmLogger;
 
+import java.util.Arrays;
 import java.util.UUID;
 
 
@@ -19,18 +20,18 @@ import java.util.UUID;
 @EqualsAndHashCode
 public class SunshineATM implements ATM {
 
-    public static String CONTACT_CENTER = "8-666-666-666";
-    public static String VERSION = "1.04";
+    public static final String CONTACT_CENTER = "8-666-666-666";
+    public static final String VERSION = "1.05";
     private final AtmMeta meta;
-    private final BanknoteSlots banknotes;
+    private final BanknoteSlots banknoteSlots;
     private final Balance balance;
 
     public SunshineATM() {
         AtmLogger.logInitializing();
 
-        banknotes = new SunshineATMBanknoteSlots();
-        balance = new SunshineATMBalance(banknotes.getTotalSum());
         meta = new AtmMeta.AtmMetaBuilder().corporation(getClass().getSimpleName()).contactCenter(CONTACT_CENTER).version(VERSION).hardwareId(UUID.randomUUID().toString()).build();
+        banknoteSlots = new SunshineATMBanknoteSlots();
+        balance = new SunshineATMBalance(banknoteSlots.getTotalSum());
 
         AtmLogger.logBooted(meta);
     }
@@ -42,20 +43,16 @@ public class SunshineATM implements ATM {
 
     @Override
     public void requestDeposit(Banknote... banknotes) {
-        var profit = 0;
-
-        for (Banknote banknote : banknotes) {
-            this.banknotes.put(banknote, 1);
-            profit += banknote.value();
-        }
-
+        banknoteSlots.depositBanknotes(1, banknotes);
+        var profit = Arrays.stream(banknotes).mapToInt(Banknote::value).sum();
         balance.deposit(profit);
+
         AtmLogger.logDeposit(profit, balance);
     }
 
     @Override
     public void requestWithdraw(int cash) {
-        validateOperation(cash);
+        validateWithdraw(cash);
 
         try {
             takeBanknotes(new DivisionByReminderStrategy(cash));
@@ -63,10 +60,11 @@ public class SunshineATM implements ATM {
             AtmLogger.logWithdraw(cash, balance);
         } catch (NotEnoughBanknotesException e) {
             e.printStackTrace();
+            AtmLogger.logError(e.getMessage());
         }
     }
 
-    private void validateOperation(int cash) {
+    private void validateWithdraw(int cash) {
         if (!requestedCashDividedClearlyByMinimalNominal(cash))
             throw new IllegalArgumentException("Requested sum should clearly divided by " + Banknote.N_50.value());
 
@@ -87,7 +85,7 @@ public class SunshineATM implements ATM {
             var banknotesCount = entry.getValue();
 
             try {
-                banknotes.take(nominal, banknotesCount);
+                banknoteSlots.withdrawBanknotes(nominal, banknotesCount);
             } catch (NotEnoughBanknotesException e) {
                 var requestedCash = nominal.value() * banknotesCount;
                 AtmLogger.logRequestedCountNotEnough(requestedCash);

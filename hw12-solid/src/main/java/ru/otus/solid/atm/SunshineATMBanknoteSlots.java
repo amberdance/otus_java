@@ -22,7 +22,7 @@ public class SunshineATMBanknoteSlots implements BanknoteSlots {
     }
 
     @Override
-    public void take(Banknote banknote, int requestedCount) throws NotEnoughBanknotesException {
+    public void withdrawBanknotes(Banknote banknote, int requestedCount) throws NotEnoughBanknotesException {
         if (requestedCountIsZero(requestedCount))
             throw new UnsupportedOperationException("Count on banknotes must be" + " greater than zero");
         if (requestedCountExceed(banknote, requestedCount)) throw new NotEnoughBanknotesException();
@@ -31,10 +31,18 @@ public class SunshineATMBanknoteSlots implements BanknoteSlots {
     }
 
     @Override
-    public void put(Banknote banknote, int count) {
-        if (requestedCountIsZero(count)) throw new UnsupportedOperationException();
-
+    public void depositBanknotes(Banknote banknote, int count) {
+        validateDeposit(count);
         slots.put(banknote, slots.get(banknote) + count);
+    }
+
+    @Override
+    public void depositBanknotes(int count, Banknote... banknotes) {
+        validateDeposit(count);
+
+        for (var banknote : banknotes) {
+            slots.put(banknote, slots.get(banknote) + count);
+        }
     }
 
     @Override
@@ -53,6 +61,10 @@ public class SunshineATMBanknoteSlots implements BanknoteSlots {
     @Override
     public int getTotalSlots() {
         return slots.values().stream().mapToInt(Integer::valueOf).sum();
+    }
+
+    private void validateDeposit(int count) {
+        if (requestedCountIsZero(count)) throw new UnsupportedOperationException();
     }
 
     private boolean requestedCountIsZero(int count) {

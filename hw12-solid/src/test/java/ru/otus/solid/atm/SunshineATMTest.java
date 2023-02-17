@@ -39,7 +39,7 @@ class SunshineATMTest {
     @Test
     void givenATM_whenBooted_thenBalanceShouldEqualsInitialCapacity() {
         var atm = new SunshineATM();
-        assertEquals(atm.getBanknotes().getTotalSum(), atm.requestBalance());
+        assertEquals(atm.getBanknoteSlots().getTotalSum(), atm.requestBalance());
     }
 
     @Test
@@ -98,7 +98,7 @@ class SunshineATMTest {
     void givenSomeCash_whenTakeCash_thenBanknoteSlotsDecreasedByAppliedOptimizationStrategy() {
         var cash = 5950; // (1) 5000 + (1) 500 + (2) 200 + (1) 50
 
-        var banknotes = sunshineATM.getBanknotes();
+        var banknotes = sunshineATM.getBanknoteSlots();
         var countOf50NominalBefore = banknotes.getCountByNominal(Banknote.N_50);
         var countOf200NominalBefore = banknotes.getCountByNominal(Banknote.N_200);
         var countOf500NominalBefore = banknotes.getCountByNominal(Banknote.N_500);

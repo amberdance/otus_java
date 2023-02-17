@@ -4,7 +4,7 @@ public interface Balance {
 
     int remains();
 
-    void deposit(int profit);
+    void deposit(int cash);
 
-    void withdraw(int cost);
+    void withdraw(int cash);
 }

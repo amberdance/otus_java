@@ -7,4 +7,6 @@ public class CapacityExhaustedException extends RuntimeException {
     public CapacityExhaustedException(String message) {
         super(message);
     }
+
+
 }

@@ -9,24 +9,24 @@ import ru.otus.solid.interfaces.Balance;
 @ToString
 public class SunshineATMBalance implements Balance {
 
-    private int current;
+    private int remains;
 
     public SunshineATMBalance(int initialCapacity) {
-        this.current = initialCapacity;
+        this.remains = initialCapacity;
     }
 
     @Override
     public int remains() {
-        return current;
+        return remains;
     }
 
     @Override
     public void deposit(int profit) {
-        current += profit;
+        remains += profit;
     }
 
     @Override
     public void withdraw(int cost) {
-        current -= cost;
+        remains -= cost;
     }
 }
