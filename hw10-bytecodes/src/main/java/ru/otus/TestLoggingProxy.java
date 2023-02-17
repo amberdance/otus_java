@@ -25,8 +25,9 @@ public class TestLoggingProxy implements InvocationHandler {
 
     private void collectMethodsWithLogAnnotation() {
         for (Method method : original.getClass().getDeclaredMethods()) {
-            if (method.isAnnotationPresent(Log.class))
+            if (method.isAnnotationPresent(Log.class)) {
                 methodsWithLogAnnotation.add(getMethodNameWithParams(method.toString()));
+            }
         }
     }
 
@@ -41,8 +42,10 @@ public class TestLoggingProxy implements InvocationHandler {
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         Object invokeResult = method.invoke(original, args);
-
-        if (hasLogAnnotation(method.toString())) printLog(method, argsAsString(args));
+        System.out.println(method);
+        if (hasLogAnnotation(method.toString())) {
+            printLog(method, argsAsString(args));
+        }
 
         return invokeResult;
     }
