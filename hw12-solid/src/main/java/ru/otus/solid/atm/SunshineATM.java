@@ -7,7 +7,7 @@ import ru.otus.solid.exception.CapacityExhaustedException;
 import ru.otus.solid.exception.NotEnoughBanknotesException;
 import ru.otus.solid.interfaces.ATM;
 import ru.otus.solid.interfaces.Balance;
-import ru.otus.solid.interfaces.BanknoteSlot;
+import ru.otus.solid.interfaces.BanknoteSlots;
 import ru.otus.solid.interfaces.OptimizationStrategy;
 import ru.otus.solid.utils.AtmLogger;
 
@@ -20,17 +20,17 @@ public class SunshineATM implements ATM {
 
     public static String CONTACT_CENTER = "8-666-666-666";
     public static String VERSION = "1.04";
-    private final ATMMeta meta;
-    private final BanknoteSlot banknotes;
+    private final AtmMeta meta;
+    private final BanknoteSlots banknotes;
     private final Balance balance;
 
 
     public SunshineATM() {
         AtmLogger.logInitializing();
 
-        banknotes = new SunshineATMBanknotes();
+        banknotes = new SunshineATMBanknoteSlots();
         balance = new SunshineATMBalance(banknotes.getTotalSum());
-        meta = new ATMMeta.ATMMetaBuilder().corporation(getClass().getSimpleName()).contactCenter(CONTACT_CENTER).version(VERSION).hardwareId(UUID.randomUUID().toString()).build();
+        meta = new AtmMeta.AtmMetaBuilder().corporation(getClass().getSimpleName()).contactCenter(CONTACT_CENTER).version(VERSION).hardwareId(UUID.randomUUID().toString()).build();
 
         AtmLogger.logBooted(meta);
     }
@@ -41,12 +41,12 @@ public class SunshineATM implements ATM {
     }
 
     @Override
-    public void put(Nominal... nominals) {
+    public void put(Banknote... banknotes) {
         var profit = 0;
 
-        for (Nominal nominal : nominals) {
-            banknotes.put(nominal, 1);
-            profit += nominal.value();
+        for (Banknote banknote : banknotes) {
+            this.banknotes.put(banknote, 1);
+            profit += banknote.value();
         }
 
         balance.deposit(profit);
@@ -68,7 +68,7 @@ public class SunshineATM implements ATM {
 
     private void validateOperation(int cash) {
         if (!requestedCashDividedClearlyByMinimalNominal(cash))
-            throw new IllegalArgumentException("Requested sum should clearly divided by " + Nominal.N_50.value());
+            throw new IllegalArgumentException("Requested sum should clearly divided by " + Banknote.N_50.value());
 
         int remains = balance.remains();
 
@@ -79,7 +79,7 @@ public class SunshineATM implements ATM {
         }
     }
 
-    private void takeBanknotes(OptimizationStrategy<Nominal, Integer> strategy) throws NotEnoughBanknotesException {
+    private void takeBanknotes(OptimizationStrategy<Banknote, Integer> strategy) throws NotEnoughBanknotesException {
         var result = strategy.optimize().getResult();
 
         for (var entry : result.entrySet()) {
@@ -97,7 +97,7 @@ public class SunshineATM implements ATM {
     }
 
     private boolean requestedCashDividedClearlyByMinimalNominal(int cash) {
-        return cash % Nominal.N_50.value() == 0;
+        return cash % Banknote.N_50.value() == 0;
     }
 }
 

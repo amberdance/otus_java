@@ -9,9 +9,9 @@ import java.util.Map;
 
 @ToString
 @EqualsAndHashCode
-public class DivisionByReminderStrategy implements OptimizationStrategy<Nominal, Integer> {
+public class DivisionByReminderStrategy implements OptimizationStrategy<Banknote, Integer> {
 
-    private final Map<Nominal, Integer> slots = new HashMap<>();
+    private final Map<Banknote, Integer> slots = new HashMap<>();
     private int requestedCash;
 
     public DivisionByReminderStrategy(int requestedCash) {
@@ -35,18 +35,18 @@ public class DivisionByReminderStrategy implements OptimizationStrategy<Nominal,
      * - 25000 - 25000 = 0 (остатков не осталось, выход из цикла)
      */
     @Override
-    public OptimizationStrategy<Nominal, Integer> optimize() {
-        for (Nominal nominal : Nominal.valuesReversed()) {
+    public OptimizationStrategy<Banknote, Integer> optimize() {
+        for (Banknote banknote : Banknote.valuesReversed()) {
             if (requestedCash == 0) break;
 
-            var nominalCost = nominal.value();
+            var nominalCost = banknote.value();
             var remainByDivide = requestedCash % nominalCost;
 
             if (remainByDivide == 0) {
-                slots.put(nominal, requestedCash / nominalCost);
+                slots.put(banknote, requestedCash / nominalCost);
             } else {
                 if (requestedCash < nominalCost) continue;
-                slots.put(nominal, (requestedCash - remainByDivide) / nominalCost);
+                slots.put(banknote, (requestedCash - remainByDivide) / nominalCost);
             }
 
             requestedCash -= (requestedCash / nominalCost) * nominalCost;
@@ -56,7 +56,7 @@ public class DivisionByReminderStrategy implements OptimizationStrategy<Nominal,
     }
 
     @Override
-    public Map<Nominal, Integer> getResult() {
+    public Map<Banknote, Integer> getResult() {
         return slots;
     }
 

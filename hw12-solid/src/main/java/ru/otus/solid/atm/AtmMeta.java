@@ -9,7 +9,7 @@ import lombok.experimental.FieldDefaults;
 @Data
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ATMMeta {
+public class AtmMeta {
 
     @NonNull String hardwareId;
     @NonNull String version;

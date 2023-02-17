@@ -52,9 +52,9 @@ class SunshineATMTest {
     @Test
     void givenEachNominalBanknote_whenDeposited_thenBalanceWillIncrease() {
         var balanceBeforeDeposit = sunshineATM.getBalance();
-        var profit = Arrays.stream(Nominal.values()).mapToInt(Nominal::value).sum();
+        var profit = Arrays.stream(Banknote.values()).mapToInt(Banknote::value).sum();
 
-        sunshineATM.put(Nominal.values());
+        sunshineATM.put(Banknote.values());
 
         var balanceAfterDeposit = sunshineATM.getBalance();
 
@@ -64,7 +64,7 @@ class SunshineATMTest {
     @Test
     void givenSomeCash_whenTakeCash_thenBalanceWillDecrease() {
         var balanceBeforeDeposit = sunshineATM.getBalance();
-        var cash = balanceBeforeDeposit % Nominal.N_5000.value();
+        var cash = balanceBeforeDeposit % Banknote.N_5000.value();
 
         sunshineATM.take(cash);
 
@@ -98,17 +98,17 @@ class SunshineATMTest {
         var cash = 5950; // (1) 5000 + (1) 500 + (2) 200 + (1) 50
 
         var banknotes = sunshineATM.getBanknotes();
-        var countOf50NominalBefore = banknotes.getCountByNominal(Nominal.N_50);
-        var countOf200NominalBefore = banknotes.getCountByNominal(Nominal.N_200);
-        var countOf500NominalBefore = banknotes.getCountByNominal(Nominal.N_500);
-        var countOf5000NominalBefore = banknotes.getCountByNominal(Nominal.N_5000);
+        var countOf50NominalBefore = banknotes.getCountByNominal(Banknote.N_50);
+        var countOf200NominalBefore = banknotes.getCountByNominal(Banknote.N_200);
+        var countOf500NominalBefore = banknotes.getCountByNominal(Banknote.N_500);
+        var countOf5000NominalBefore = banknotes.getCountByNominal(Banknote.N_5000);
 
         sunshineATM.take(cash);
 
-        var countOf50NominalAfter = banknotes.getCountByNominal(Nominal.N_50);
-        var countOf200NominalAfter = banknotes.getCountByNominal(Nominal.N_200);
-        var countOf500NominalAfter = banknotes.getCountByNominal(Nominal.N_500);
-        var countOf5000NominalAfter = banknotes.getCountByNominal(Nominal.N_5000);
+        var countOf50NominalAfter = banknotes.getCountByNominal(Banknote.N_50);
+        var countOf200NominalAfter = banknotes.getCountByNominal(Banknote.N_200);
+        var countOf500NominalAfter = banknotes.getCountByNominal(Banknote.N_500);
+        var countOf5000NominalAfter = banknotes.getCountByNominal(Banknote.N_5000);
 
         assertEquals(countOf50NominalBefore, countOf50NominalAfter + 1);
         assertEquals(countOf200NominalBefore, countOf200NominalAfter + 2);

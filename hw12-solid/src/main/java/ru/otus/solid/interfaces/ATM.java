@@ -1,16 +1,16 @@
 package ru.otus.solid.interfaces;
 
-import ru.otus.solid.atm.ATMMeta;
-import ru.otus.solid.atm.Nominal;
+import ru.otus.solid.atm.AtmMeta;
+import ru.otus.solid.atm.Banknote;
 
 public interface ATM {
 
 
     int getBalance();
 
-    ATMMeta getMeta();
+    AtmMeta getMeta();
 
-    void put(Nominal... nominals);
+    void put(Banknote... banknotes);
 
     void take(int cash);
 

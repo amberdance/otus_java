@@ -12,9 +12,9 @@ class DivisionReminderStrategyTest {
         var strategy = new DivisionByReminderStrategy(givenCash);
         var slots = strategy.optimize().getResult();
 
-        assertEquals(slots.get(Nominal.N_5000), 2);
-        assertEquals(slots.get(Nominal.N_500), 1);
-        assertEquals(slots.get(Nominal.N_200), 2);
-        assertEquals(slots.get(Nominal.N_50), 1);
+        assertEquals(slots.get(Banknote.N_5000), 2);
+        assertEquals(slots.get(Banknote.N_500), 1);
+        assertEquals(slots.get(Banknote.N_200), 2);
+        assertEquals(slots.get(Banknote.N_50), 1);
     }
 }
