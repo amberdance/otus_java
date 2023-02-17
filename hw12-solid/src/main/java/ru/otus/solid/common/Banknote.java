@@ -1,4 +1,4 @@
-package ru.otus.solid.atm;
+package ru.otus.solid.common;
 
 import java.util.ArrayList;
 import java.util.Arrays;

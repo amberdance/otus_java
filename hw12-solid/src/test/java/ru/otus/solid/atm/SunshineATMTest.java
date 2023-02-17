@@ -6,6 +6,7 @@ import ch.qos.logback.core.read.ListAppender;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.slf4j.LoggerFactory;
+import ru.otus.solid.common.Banknote;
 import ru.otus.solid.exception.CapacityExhaustedException;
 import ru.otus.solid.utils.AtmLogger;
 

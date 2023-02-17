@@ -1,6 +1,8 @@
 package ru.otus.solid.atm;
 
 import org.junit.jupiter.api.Test;
+import ru.otus.solid.common.Banknote;
+import ru.otus.solid.common.DivisionByReminderStrategy;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

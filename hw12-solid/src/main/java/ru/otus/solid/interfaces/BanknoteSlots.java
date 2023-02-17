@@ -1,6 +1,6 @@
 package ru.otus.solid.interfaces;
 
-import ru.otus.solid.atm.Banknote;
+import ru.otus.solid.common.Banknote;
 import ru.otus.solid.exception.NotEnoughBanknotesException;
 
 public interface BanknoteSlots {

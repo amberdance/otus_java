@@ -2,6 +2,7 @@ package ru.otus.solid.atm;
 
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import ru.otus.solid.common.Banknote;
 import ru.otus.solid.exception.NotEnoughBanknotesException;
 import ru.otus.solid.interfaces.BanknoteSlots;
 

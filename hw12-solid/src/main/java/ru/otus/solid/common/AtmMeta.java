@@ -1,4 +1,4 @@
-package ru.otus.solid.atm;
+package ru.otus.solid.common;
 
 import lombok.AccessLevel;
 import lombok.Builder;
