@@ -4,7 +4,6 @@ import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.read.ListAppender;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.slf4j.LoggerFactory;
 import ru.otus.solid.exception.CapacityExhaustException;
@@ -95,23 +94,25 @@ class SunshineATMTest {
     }
 
     @Test
-    @Disabled
-    void givenSomeCash_whenTakeCash_thenBanknoteSlotNominalWilDecreaseByMinimalNominalsCount() {
+    void givenSomeCash_whenTakeCash_thenBanknoteSlotsDecreasedByAppliedOptimizationStrategy() {
         var cash = 5950; // (1) 5000 + (1) 500 + (2) 200 + (1) 50
 
         var banknotes = sunshineATM.getBanknotes();
         var countOf50NominalBefore = banknotes.getCountByNominal(Nominal.N_50);
-        var countOf100NominalBefore = banknotes.getCountByNominal(Nominal.N_100);
+        var countOf200NominalBefore = banknotes.getCountByNominal(Nominal.N_200);
+        var countOf500NominalBefore = banknotes.getCountByNominal(Nominal.N_500);
         var countOf5000NominalBefore = banknotes.getCountByNominal(Nominal.N_5000);
 
         sunshineATM.take(cash);
 
         var countOf50NominalAfter = banknotes.getCountByNominal(Nominal.N_50);
-        var countOf100NominalAfter = banknotes.getCountByNominal(Nominal.N_100);
+        var countOf200NominalAfter = banknotes.getCountByNominal(Nominal.N_200);
+        var countOf500NominalAfter = banknotes.getCountByNominal(Nominal.N_500);
         var countOf5000NominalAfter = banknotes.getCountByNominal(Nominal.N_5000);
 
-        //assertEquals(countOf50NominalAfter, countOf50NominalBefore + 1);
-        //assertEquals(countOf100NominalAfter, countOf100NominalBefore + 9);
+        assertEquals(countOf50NominalBefore, countOf50NominalAfter + 1);
+        assertEquals(countOf200NominalBefore, countOf200NominalAfter + 2);
+        assertEquals(countOf500NominalBefore, countOf500NominalAfter + 1);
         assertEquals(countOf5000NominalBefore, countOf5000NominalAfter + 1);
     }
 }
