@@ -92,5 +92,8 @@ class SunshineATMBanknotesTest {
         assertThrows(UnsupportedOperationException.class, () -> slots.put(getRandomNominal(), 0));
     }
 
-
+    @Test
+    void testTotalCount() {
+        assertEquals(BanknoteSlot.DEFAULT_NOMINAL_COUNT, slots.getTotalSlots() / Nominal.values().length);
+    }
 }

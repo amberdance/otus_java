@@ -29,6 +29,4 @@ public interface BanknoteSlot {
     int getTotalSum();
 
     int getTotalSlots();
-
-
 }
