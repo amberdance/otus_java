@@ -67,7 +67,7 @@ public class SunshineATM implements ATM {
     }
 
     private void validateWithdraw(int cash) {
-        if (!requestedCashDividedClearlyByMinimalNominal(cash))
+        if (requestedSumNotCorrect(cash))
             throw new IllegalArgumentException("Requested sum should clearly divided by " + Banknote.N_50.value());
 
         int remains = balance.remains();
@@ -96,8 +96,8 @@ public class SunshineATM implements ATM {
         }
     }
 
-    private boolean requestedCashDividedClearlyByMinimalNominal(int cash) {
-        return cash % Banknote.N_50.value() == 0;
+    private boolean requestedSumNotCorrect(int cash) {
+        return cash % Banknote.N_50.value() != 0;
     }
 }
 
