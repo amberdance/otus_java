@@ -5,13 +5,12 @@ import ru.otus.solid.atm.Banknote;
 
 public interface ATM {
 
-
-    int getBalance();
-
     AtmMeta getMeta();
 
-    void put(Banknote... banknotes);
+    int requestBalance();
 
-    void take(int cash);
+    void requestDeposit(Banknote... banknotes);
+
+    void requestWithdraw(int cash);
 
 }

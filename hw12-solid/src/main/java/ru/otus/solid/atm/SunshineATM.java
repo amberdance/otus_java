@@ -13,8 +13,9 @@ import ru.otus.solid.utils.AtmLogger;
 
 import java.util.UUID;
 
-@Getter
+
 @ToString
+@Getter
 @EqualsAndHashCode
 public class SunshineATM implements ATM {
 
@@ -23,7 +24,6 @@ public class SunshineATM implements ATM {
     private final AtmMeta meta;
     private final BanknoteSlots banknotes;
     private final Balance balance;
-
 
     public SunshineATM() {
         AtmLogger.logInitializing();
@@ -36,12 +36,12 @@ public class SunshineATM implements ATM {
     }
 
     @Override
-    public int getBalance() {
+    public int requestBalance() {
         return balance.remains();
     }
 
     @Override
-    public void put(Banknote... banknotes) {
+    public void requestDeposit(Banknote... banknotes) {
         var profit = 0;
 
         for (Banknote banknote : banknotes) {
@@ -54,7 +54,7 @@ public class SunshineATM implements ATM {
     }
 
     @Override
-    public void take(int cash) {
+    public void requestWithdraw(int cash) {
         validateOperation(cash);
 
         try {

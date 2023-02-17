@@ -39,7 +39,7 @@ class SunshineATMTest {
     @Test
     void givenATM_whenBooted_thenBalanceShouldEqualsInitialCapacity() {
         var atm = new SunshineATM();
-        assertEquals(atm.getBanknotes().getTotalSum(), atm.getBalance());
+        assertEquals(atm.getBanknotes().getTotalSum(), atm.requestBalance());
     }
 
     @Test
@@ -51,24 +51,24 @@ class SunshineATMTest {
 
     @Test
     void givenEachNominalBanknote_whenDeposited_thenBalanceWillIncrease() {
-        var balanceBeforeDeposit = sunshineATM.getBalance();
+        var balanceBeforeDeposit = sunshineATM.requestBalance();
         var profit = Arrays.stream(Banknote.values()).mapToInt(Banknote::value).sum();
 
-        sunshineATM.put(Banknote.values());
+        sunshineATM.requestDeposit(Banknote.values());
 
-        var balanceAfterDeposit = sunshineATM.getBalance();
+        var balanceAfterDeposit = sunshineATM.requestBalance();
 
         assertEquals(profit, balanceAfterDeposit - balanceBeforeDeposit);
     }
 
     @Test
     void givenSomeCash_whenTakeCash_thenBalanceWillDecrease() {
-        var balanceBeforeDeposit = sunshineATM.getBalance();
+        var balanceBeforeDeposit = sunshineATM.requestBalance();
         var cash = balanceBeforeDeposit % Banknote.N_5000.value();
 
-        sunshineATM.take(cash);
+        sunshineATM.requestWithdraw(cash);
 
-        var balanceAfterDeposit = sunshineATM.getBalance();
+        var balanceAfterDeposit = sunshineATM.requestBalance();
 
         assertEquals(cash, balanceBeforeDeposit - balanceAfterDeposit);
     }
@@ -76,12 +76,13 @@ class SunshineATMTest {
 
     @Test
     void givenAmountOfCash_whenCapacityExceed_thenThrewException() {
-        assertThrows(CapacityExhaustedException.class, () -> sunshineATM.take(sunshineATM.getBalance() * 2));
+        assertThrows(CapacityExhaustedException.class,
+                () -> sunshineATM.requestWithdraw(sunshineATM.requestBalance() * 2));
     }
 
     @Test
     void givenNotMultipleSum_whenTakeCash_thenThrewException() {
-        assertThrows(IllegalArgumentException.class, () -> sunshineATM.take(66666));
+        assertThrows(IllegalArgumentException.class, () -> sunshineATM.requestWithdraw(66666));
     }
 
     @Test
@@ -89,7 +90,7 @@ class SunshineATMTest {
         int[] cashCases = new int[]{50, 100, 200, 500, 900, 1000, 2200, 5000, 6600};
 
         for (int cash : cashCases) {
-            assertDoesNotThrow(() -> sunshineATM.take(cash));
+            assertDoesNotThrow(() -> sunshineATM.requestWithdraw(cash));
         }
     }
 
@@ -103,7 +104,7 @@ class SunshineATMTest {
         var countOf500NominalBefore = banknotes.getCountByNominal(Banknote.N_500);
         var countOf5000NominalBefore = banknotes.getCountByNominal(Banknote.N_5000);
 
-        sunshineATM.take(cash);
+        sunshineATM.requestWithdraw(cash);
 
         var countOf50NominalAfter = banknotes.getCountByNominal(Banknote.N_50);
         var countOf200NominalAfter = banknotes.getCountByNominal(Banknote.N_200);
