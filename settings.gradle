@@ -10,3 +10,5 @@
 
 
 rootProject.name = 'otus-java'
+
+include 'hw12-solid'
