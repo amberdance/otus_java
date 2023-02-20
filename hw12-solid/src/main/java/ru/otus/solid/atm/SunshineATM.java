@@ -1,38 +1,37 @@
 package ru.otus.solid.atm;
 
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
+import lombok.*;
+import ru.otus.solid.ATM;
+import ru.otus.solid.Balance;
+import ru.otus.solid.OptimizationStrategy;
 import ru.otus.solid.common.Banknote;
 import ru.otus.solid.common.DivisionByReminderStrategy;
 import ru.otus.solid.exception.CapacityExhaustedException;
 import ru.otus.solid.exception.NotEnoughBanknotesException;
-import ru.otus.solid.ATM;
-import ru.otus.solid.OptimizationStrategy;
 import ru.otus.solid.utils.AtmLogger;
 
 import java.util.Arrays;
-import java.util.UUID;
 
 
 @ToString
+@Getter
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 @EqualsAndHashCode(callSuper = false)
-public class SunshineATM extends BaseATM implements ATM {
+public class SunshineATM implements ATM {
 
-    public static final String CONTACT_CENTER = "8-666-666-666";
-    public static final String VERSION = "1.05";
-
+    private final SunshineATMBanknoteSlots banknoteSlots;
+    private final Balance balance;
 
     public SunshineATM() {
-        AtmLogger.logInitializing();
-
-        meta =
-                new AtmMeta.AtmMetaBuilder().corporation(getClass().getSimpleName()).contactCenter(CONTACT_CENTER).version(VERSION).hardwareId(UUID.randomUUID().toString()).build();
         banknoteSlots = new SunshineATMBanknoteSlots();
         balance = new SunshineATMBalance(banknoteSlots.getTotalSum());
-
-        AtmLogger.logBooted(meta);
     }
 
+
+    @Override
+    public int requestBalance() {
+        return balance.remains();
+    }
 
     @Override
     public void requestDeposit(Banknote... banknotes) {

@@ -1,9 +1,8 @@
 package ru.otus.solid.utils;
 
 import lombok.extern.slf4j.Slf4j;
-import ru.otus.solid.atm.AtmMeta;
-import ru.otus.solid.exception.CapacityExhaustedException;
 import ru.otus.solid.Balance;
+import ru.otus.solid.exception.CapacityExhaustedException;
 
 @Slf4j
 public final class AtmLogger {
@@ -12,17 +11,6 @@ public final class AtmLogger {
 
     private AtmLogger() {
         throw new UnsupportedOperationException("Sorry, but not");
-    }
-
-    public static void logInitializing() {
-        log.info("Initializing services... please be patient");
-    }
-
-    public static void logBooted(AtmMeta meta) {
-        log.info(String.format("@%s corp.%n" + "--Version: %s%n" + "--ATM id: %s%n" + "Call %s if you have a " +
-                        "troubles" + ". Have a nice day!", meta.getCorporation(), meta.getVersion(),
-                meta.getHardwareId(),
-                meta.getContactCenter()));
     }
 
     public static void logDeposit(int profit, Balance balance) {
