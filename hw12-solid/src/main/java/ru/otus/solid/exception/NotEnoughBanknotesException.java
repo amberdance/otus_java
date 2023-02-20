@@ -1,6 +1,6 @@
 package ru.otus.solid.exception;
 
-public class NotEnoughBanknotesException extends Exception {
+public class NotEnoughBanknotesException extends RuntimeException {
 
     public NotEnoughBanknotesException() {
     }

@@ -1,13 +1,12 @@
 package ru.otus.solid;
 
 import ru.otus.solid.common.Banknote;
-import ru.otus.solid.exception.NotEnoughBanknotesException;
 
 public interface BanknoteSlots {
 
     int DEFAULT_NOMINAL_COUNT = 100;
 
-    void withdrawBanknotes(Banknote banknote, int count) throws NotEnoughBanknotesException;
+    void withdrawBanknotes(Banknote banknote, int count);
 
     void depositBanknotes(Banknote banknote, int count);
 

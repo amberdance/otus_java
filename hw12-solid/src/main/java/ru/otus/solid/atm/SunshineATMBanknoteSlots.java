@@ -2,9 +2,9 @@ package ru.otus.solid.atm;
 
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import ru.otus.solid.BanknoteSlots;
 import ru.otus.solid.common.Banknote;
 import ru.otus.solid.exception.NotEnoughBanknotesException;
-import ru.otus.solid.BanknoteSlots;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -23,7 +23,7 @@ public class SunshineATMBanknoteSlots implements BanknoteSlots {
     }
 
     @Override
-    public void withdrawBanknotes(Banknote banknote, int requestedCount) throws NotEnoughBanknotesException {
+    public void withdrawBanknotes(Banknote banknote, int requestedCount) {
         if (requestedCountIsZero(requestedCount))
             throw new UnsupportedOperationException("Count on banknotes must be" + " greater than zero");
         if (requestedCountExceed(banknote, requestedCount)) throw new NotEnoughBanknotesException();
