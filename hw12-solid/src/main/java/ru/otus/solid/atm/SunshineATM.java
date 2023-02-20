@@ -35,7 +35,7 @@ public class SunshineATM implements ATM {
 
     @Override
     public void requestDeposit(Banknote... banknotes) {
-        banknoteSlots.depositBanknotes(1, banknotes);
+        banknoteSlots.put(1, banknotes);
         var profit = Arrays.stream(banknotes).mapToInt(Banknote::value).sum();
         balance.deposit(profit);
 
@@ -77,7 +77,7 @@ public class SunshineATM implements ATM {
             var banknotesCount = entry.getValue();
 
             try {
-                banknoteSlots.withdrawBanknotes(nominal, banknotesCount);
+                banknoteSlots.take(nominal, banknotesCount);
             } catch (NotEnoughBanknotesException e) {
                 var requestedCash = nominal.value() * banknotesCount;
                 AtmLogger.logRequestedCountNotEnough(requestedCash);

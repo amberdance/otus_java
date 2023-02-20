@@ -27,7 +27,7 @@ public final class AtmLogger {
     }
 
     public static void logRequestedCountNotEnough(int requestedCash) {
-        log.error("Cannot withdrawBanknotes {} because slot is empty. Please reduce requested sum", requestedCash);
+        log.error("Cannot take {} because slot is empty. Please reduce requested sum", requestedCash);
     }
 
     public static void logError(String message) {

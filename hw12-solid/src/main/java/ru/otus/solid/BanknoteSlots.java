@@ -6,11 +6,11 @@ public interface BanknoteSlots {
 
     int DEFAULT_NOMINAL_COUNT = 100;
 
-    void withdrawBanknotes(Banknote banknote, int count);
+    void take(Banknote banknote, int count);
 
-    void depositBanknotes(Banknote banknote, int count);
+    void put(Banknote banknote, int count);
 
-    void depositBanknotes(int count, Banknote... banknotes);
+    void put(int count, Banknote... banknotes);
 
     int getCountByNominal(Banknote banknote);
 
