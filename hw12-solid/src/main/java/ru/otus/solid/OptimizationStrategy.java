@@ -1,4 +1,4 @@
-package ru.otus.solid.interfaces;
+package ru.otus.solid;
 
 import java.util.Map;
 

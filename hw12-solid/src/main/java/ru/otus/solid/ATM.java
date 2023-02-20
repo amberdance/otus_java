@@ -1,4 +1,4 @@
-package ru.otus.solid.interfaces;
+package ru.otus.solid;
 
 import ru.otus.solid.atm.AtmMeta;
 import ru.otus.solid.common.Banknote;

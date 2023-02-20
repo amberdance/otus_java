@@ -1,4 +1,4 @@
-package ru.otus.solid.interfaces;
+package ru.otus.solid;
 
 public interface Balance {
 

@@ -2,7 +2,7 @@ package ru.otus.solid.common;
 
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
-import ru.otus.solid.interfaces.OptimizationStrategy;
+import ru.otus.solid.OptimizationStrategy;
 
 import java.util.HashMap;
 import java.util.Map;

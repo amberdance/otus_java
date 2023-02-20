@@ -3,7 +3,7 @@ package ru.otus.solid.utils;
 import lombok.extern.slf4j.Slf4j;
 import ru.otus.solid.atm.AtmMeta;
 import ru.otus.solid.exception.CapacityExhaustedException;
-import ru.otus.solid.interfaces.Balance;
+import ru.otus.solid.Balance;
 
 @Slf4j
 public final class AtmLogger {

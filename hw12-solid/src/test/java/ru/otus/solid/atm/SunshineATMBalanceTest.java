@@ -2,7 +2,7 @@ package ru.otus.solid.atm;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import ru.otus.solid.interfaces.Balance;
+import ru.otus.solid.Balance;
 
 import java.util.Random;
 

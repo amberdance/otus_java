@@ -2,7 +2,7 @@ package ru.otus.solid.atm;
 
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
-import ru.otus.solid.interfaces.Balance;
+import ru.otus.solid.Balance;
 
 
 @EqualsAndHashCode

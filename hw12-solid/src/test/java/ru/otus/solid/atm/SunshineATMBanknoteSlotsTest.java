@@ -4,7 +4,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import ru.otus.solid.common.Banknote;
 import ru.otus.solid.exception.NotEnoughBanknotesException;
-import ru.otus.solid.interfaces.BanknoteSlots;
+import ru.otus.solid.BanknoteSlots;
 
 import java.util.Random;
 
