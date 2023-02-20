@@ -4,6 +4,8 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import ru.otus.solid.OptimizationStrategy;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,25 +20,12 @@ public class DivisionByReminderStrategy implements OptimizationStrategy<Banknote
         this.requestedCash = requestedCash;
     }
 
-    /**
-     * Решение не лучшее, хотелось бы применить разделяй и властвуй, но власти и опыта.
-     * Принцип работы:
-     * Сумма к снятию - 26000.
-     * На каждой итерации по отсортированным в порядке убывания номиналам (важно) (5000, 2000, 1000 и тд) делается
-     * проверка:
-     * 1) Если число делится c остатком на текущий номинал, то:
-     * - 26000 - 1000 (остаток) = 25000
-     * - 25000 / 5000 (текущий номинал) = 5 (кол-во купюр)
-     * - 26000 - 25000 = 1000 (вычитается остаток от запрошенной суммы и переход на следующую итерацию, с оставшейся
-     * суммой (1000)
-     * 2) Если число делится полностью без остатка, то
-     * - 25000 % 5000 = 0
-     * - 25000 / (текущий номинал) = 5 (кол-во купюр)
-     * - 25000 - 25000 = 0 (остатков не осталось, выход из цикла)
-     */
     @Override
     public OptimizationStrategy<Banknote, Integer> optimize() {
-        for (Banknote banknote : Banknote.valuesReversed()) {
+        var banknotes = new java.util.ArrayList<>(Arrays.stream(Banknote.values()).toList());
+        Collections.reverse(banknotes);
+
+        for (Banknote banknote : banknotes) {
             if (requestedCash == 0) break;
 
             var nominalCost = banknote.value();
