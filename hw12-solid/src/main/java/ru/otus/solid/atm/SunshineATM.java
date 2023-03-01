@@ -5,7 +5,7 @@ import ru.otus.solid.ATM;
 import ru.otus.solid.Balance;
 import ru.otus.solid.OptimizationStrategy;
 import ru.otus.solid.common.Banknote;
-import ru.otus.solid.common.DivisionByReminderStrategy;
+import ru.otus.solid.common.PlaneWithdrawStrategy;
 import ru.otus.solid.exception.CapacityExhaustedException;
 import ru.otus.solid.exception.NotEnoughBanknotesException;
 import ru.otus.solid.utils.AtmLogger;
@@ -47,7 +47,7 @@ public class SunshineATM implements ATM {
         validateWithdraw(cash);
 
         try {
-            takeBanknotes(new DivisionByReminderStrategy(cash));
+            takeBanknotes(new PlaneWithdrawStrategy(cash));
             balance.withdraw(cash);
             AtmLogger.logWithdraw(cash, balance);
         } catch (NotEnoughBanknotesException e) {

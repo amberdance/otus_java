@@ -9,7 +9,7 @@ class DivisionReminderStrategyTest {
     @Test
     void testDivisionWithRemainder() {
         var givenCash = 19950;
-        var strategy = new DivisionByReminderStrategy(givenCash);
+        var strategy = new PlaneWithdrawStrategy(givenCash);
         var slots = strategy.optimize().getResult();
 
         assertEquals(slots.get(Banknote.N_5000), 3);

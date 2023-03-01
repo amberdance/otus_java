@@ -11,12 +11,12 @@ import java.util.Map;
 
 @ToString
 @EqualsAndHashCode
-public class DivisionByReminderStrategy implements OptimizationStrategy<Banknote, Integer> {
+public class PlaneWithdrawStrategy implements OptimizationStrategy<Banknote, Integer> {
 
     private final Map<Banknote, Integer> slots = new HashMap<>();
     private int requestedCash;
 
-    public DivisionByReminderStrategy(int requestedCash) {
+    public PlaneWithdrawStrategy(int requestedCash) {
         this.requestedCash = requestedCash;
     }
 
