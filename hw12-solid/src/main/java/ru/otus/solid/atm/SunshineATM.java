@@ -19,11 +19,11 @@ import java.util.Arrays;
 @EqualsAndHashCode(callSuper = false)
 public class SunshineATM implements ATM {
 
-    private final SunshineATMBanknoteSlots banknoteSlots;
+    private final SunshineATMBanknoteCassette banknoteSlots;
     private final Balance balance;
 
     public SunshineATM() {
-        banknoteSlots = new SunshineATMBanknoteSlots();
+        banknoteSlots = new SunshineATMBanknoteCassette();
         balance = new SunshineATMBalance(banknoteSlots.getTotalSum());
     }
 

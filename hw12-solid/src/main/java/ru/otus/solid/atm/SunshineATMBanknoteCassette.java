@@ -2,7 +2,7 @@ package ru.otus.solid.atm;
 
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
-import ru.otus.solid.BanknoteSlots;
+import ru.otus.solid.BanknoteCassette;
 import ru.otus.solid.common.Banknote;
 import ru.otus.solid.exception.NotEnoughBanknotesException;
 
@@ -12,11 +12,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 @EqualsAndHashCode
 @ToString
-public class SunshineATMBanknoteSlots implements BanknoteSlots {
+public class SunshineATMBanknoteCassette implements BanknoteCassette {
 
     private final Map<Banknote, Integer> slots = new LinkedHashMap<>();
 
-    public SunshineATMBanknoteSlots() {
+    public SunshineATMBanknoteCassette() {
         for (Banknote banknote : Banknote.values()) {
             slots.put(banknote, DEFAULT_NOMINAL_COUNT);
         }

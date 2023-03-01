@@ -2,9 +2,9 @@ package ru.otus.solid;
 
 import ru.otus.solid.common.Banknote;
 
-public interface BanknoteSlots {
+public interface BanknoteCassette {
 
-    int DEFAULT_NOMINAL_COUNT = 100;
+    int DEFAULT_NOMINAL_COUNT = 2500;
 
     void take(Banknote banknote, int count);
 

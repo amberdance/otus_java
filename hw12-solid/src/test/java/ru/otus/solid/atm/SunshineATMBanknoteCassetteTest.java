@@ -2,22 +2,22 @@ package ru.otus.solid.atm;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import ru.otus.solid.BanknoteCassette;
 import ru.otus.solid.common.Banknote;
 import ru.otus.solid.exception.NotEnoughBanknotesException;
-import ru.otus.solid.BanknoteSlots;
 
 import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class SunshineATMBanknoteSlotsTest {
+class SunshineATMBanknoteCassetteTest {
 
-    private static BanknoteSlots slots;
+    private static BanknoteCassette slots;
 
     @BeforeAll
     static void setup() {
-        slots = new SunshineATMBanknoteSlots();
+        slots = new SunshineATMBanknoteCassette();
     }
 
     @Test
@@ -43,7 +43,7 @@ class SunshineATMBanknoteSlotsTest {
     }
 
     private int mockPutBanknotes(Banknote banknote, int count) {
-        var slots = new SunshineATMBanknoteSlots();
+        var slots = new SunshineATMBanknoteCassette();
         slots.put(banknote, count);
 
         return slots.getCountByNominal(banknote);
@@ -66,7 +66,7 @@ class SunshineATMBanknoteSlotsTest {
     }
 
     private int mockTakeBanknotes(Banknote banknote, int count) {
-        var slots = new SunshineATMBanknoteSlots();
+        var slots = new SunshineATMBanknoteCassette();
 
         try {
             slots.take(banknote, count);
@@ -94,6 +94,6 @@ class SunshineATMBanknoteSlotsTest {
 
     @Test
     void testTotalCount() {
-        assertEquals(BanknoteSlots.DEFAULT_NOMINAL_COUNT, slots.getTotalSlots() / Banknote.values().length);
+        assertEquals(BanknoteCassette.DEFAULT_NOMINAL_COUNT, slots.getTotalSlots() / Banknote.values().length);
     }
 }
