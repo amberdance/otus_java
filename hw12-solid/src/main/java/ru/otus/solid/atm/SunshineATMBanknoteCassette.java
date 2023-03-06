@@ -25,7 +25,7 @@ public class SunshineATMBanknoteCassette implements BanknoteCassette {
     @Override
     public void take(Banknote banknote, int requestedCount) {
         if (requestedCountIsZero(requestedCount))
-            throw new UnsupportedOperationException("Count on banknotes must be" + " greater than zero");
+            throw new UnsupportedOperationException("Count on banknotes must be greater than zero");
         if (requestedCountExceed(banknote, requestedCount)) throw new NotEnoughBanknotesException();
 
         slots.put(banknote, slots.get(banknote) - requestedCount);
