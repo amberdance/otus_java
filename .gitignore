@@ -1,7 +1,7 @@
 # Compiled class file
 *.class
 
-# ru.otus.Log file
+# Log file
 *.log
 
 # BlueJ files
@@ -9,7 +9,6 @@
 
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
-
 
 # Package Files #
 *.jar
@@ -20,16 +19,20 @@
 *.zip
 *.tar.gz
 *.rar
+
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 
 # Ignore Gradle project-specific cache directory
 .gradle
+/buildSrc/.gradle/
 
 # Ignore Gradle build output directory
 build
 out
 
-.vscode
-.idea
-/hw08-gc/logs/
+#Idea
+*.iml
+*.iws
+*.ipr
+*.idea
