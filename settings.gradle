@@ -9,6 +9,6 @@
  */
 
 
-rootProject.name = 'otus-java'
+rootProject.name = 'otusJava'
 
-include 'hw12-solid'
+include 'hw16-io'
