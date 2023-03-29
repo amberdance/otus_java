@@ -14,21 +14,22 @@ public class TestRunner {
     public static void testClass(Class<?> testClass) {
         var instance = instantiate(testClass);
         int tests = 0, passed = 0, failed = 0;
-
         for (var method : testClass.getDeclaredMethods()) {
             if (!method.isAnnotationPresent(Test.class)) continue;
 
             tests++;
+
+            var methodName = method.getName();
             var beforeMethod = getMethodWithAnnotation(testClass, Before.class);
 
             try {
                 beforeMethod.invoke(instance);
                 method.invoke(instance);
-                System.out.println(method.getName() + " passed");
+                System.out.println(methodName + " passed");
                 passed++;
             } catch (Exception e) {
                 failed++;
-                System.out.println(method.getName() + " failed");
+                System.out.println(methodName + " failed");
             } finally {
                 var afterMethod = getMethodWithAnnotation(testClass, After.class);
 
