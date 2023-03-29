@@ -1,7 +1,7 @@
 # Compiled class file
 *.class
 
-# Log file
+# ru.otus.Log file
 *.log
 
 # BlueJ files
@@ -33,5 +33,3 @@ out
 .vscode
 .idea
 /hw08-gc/logs/
-generated
-generated_tests
