@@ -1,51 +1,41 @@
 package ru.otus;
 
-import ru.otus.annotation.After;
-import ru.otus.annotation.Before;
-import ru.otus.annotation.Test;
 
-import java.lang.annotation.Annotation;
+import ru.otus.Annotation.After;
+import ru.otus.Annotation.Before;
+import ru.otus.Annotation.Test;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Objects;
 
 public class TestRunner {
 
 
     public static void testClass(Class<?> testClass) {
+        var instance = instantiate(testClass);
         int tests = 0, passed = 0, failed = 0;
-        Object instance = instantiate(testClass);
 
         for (var method : testClass.getDeclaredMethods()) {
             if (!method.isAnnotationPresent(Test.class)) continue;
 
             tests++;
+            var beforeMethod = getMethodWithAnnotation(testClass, Before.class);
 
             try {
-                var beforeMethod = getMethodWithAnnotation(testClass, Before.class);
-
-                if (Objects.nonNull(beforeMethod)) {
-                    beforeMethod.invoke(instance);
-                }
-
+                beforeMethod.invoke(instance);
                 method.invoke(instance);
                 System.out.println(method.getName() + " passed");
                 passed++;
             } catch (Exception e) {
                 failed++;
                 System.out.println(method.getName() + " failed");
-
-
             } finally {
                 var afterMethod = getMethodWithAnnotation(testClass, After.class);
 
                 try {
-                    if (Objects.nonNull(afterMethod)) {
-                        afterMethod.invoke(instance);
-                        System.out.println("--------------------------");
-                    }
+                    afterMethod.invoke(instance);
+                    System.out.println("--------------------------");
                 } catch (IllegalAccessException | InvocationTargetException ignored) {
-
                 }
             }
         }
@@ -62,14 +52,14 @@ public class TestRunner {
         }
     }
 
-    private static Method getMethodWithAnnotation(Class<?> clazz, Class<? extends Annotation> annotationClass) {
+    private static Method getMethodWithAnnotation(Class<?> clazz, Class<? extends java.lang.annotation.Annotation> annotationClass) {
         for (var method : clazz.getDeclaredMethods()) {
             if (method.isAnnotationPresent(annotationClass)) {
                 return method;
             }
         }
 
-        return null;
+        throw new RuntimeException(clazz.getSimpleName() + " should be marked at least one of @Before, @After, @Test annotations");
     }
 
 }

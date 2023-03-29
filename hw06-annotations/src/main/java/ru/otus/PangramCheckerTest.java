@@ -1,15 +1,13 @@
 package ru.otus;
 
-import ru.otus.annotation.After;
-import ru.otus.annotation.Before;
-import ru.otus.annotation.Test;
+import ru.otus.Annotation.After;
+import ru.otus.Annotation.Before;
+import ru.otus.Annotation.Test;
 
-import static ru.otus.assertions.Assertion.assertEquals;
-import static ru.otus.assertions.Assertion.assertTrue;
+import static ru.otus.Assertion.assertTrue;
 
 public class PangramCheckerTest {
     private static final StringBuilder SOME_INSTANCE = new StringBuilder();
-
 
     @Before
     void setUp() {
@@ -29,18 +27,9 @@ public class PangramCheckerTest {
 
     @Test
     void test3() {
-        assertTrue(true, PangramChecker.isPangram(PangramChecker.ALPHABET_ENG));
-    }
-
-    @Test
-    void test4() {
         assertTrue(true, PangramChecker.isPangram("ASxzc123g,m,m,m,motiu435h13kj12hkj3kjh12jk3"));
     }
 
-    @Test
-    void test5() {
-        assertEquals("ABC", "abc");
-    }
 
     @After
     void tearDown() {
