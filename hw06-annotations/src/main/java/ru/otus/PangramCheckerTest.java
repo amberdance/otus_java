@@ -4,24 +4,17 @@ import ru.otus.annotation.After;
 import ru.otus.annotation.Before;
 import ru.otus.annotation.Test;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Path;
-
 import static ru.otus.assertions.Assertion.assertEquals;
 import static ru.otus.assertions.Assertion.assertTrue;
 
 public class PangramCheckerTest {
-    private static final String FILE_NAME = "test";
-    private static OutputStream outputStream;
+    private static StringBuilder SOME_INSTANCE = new StringBuilder();
 
 
     @Before
-    void setUp() throws IOException {
-        outputStream = Files.newOutputStream(Path.of(FILE_NAME));
-        outputStream.write("something".getBytes(Charset.defaultCharset()));
+    void setUp() {
+        SOME_INSTANCE.append(Math.random() * 10);
+        System.out.println("BEFORE");
     }
 
     @Test
@@ -51,16 +44,7 @@ public class PangramCheckerTest {
 
     @After
     void tearDown() {
-        try {
-            outputStream.close();
-            outputStream.write("\n something else".getBytes());
-        } catch (IOException e) {
-//            System.out.println("Cannot write to closed OutputStream");
-        } finally {
-            try {
-                Files.delete(Path.of(FILE_NAME));
-            } catch (IOException ignored) {
-            }
-        }
+        SOME_INSTANCE.setLength(0);
+        System.out.println("AFTER");
     }
 }

@@ -9,6 +9,6 @@
  */
 
 
-rootProject.name = 'otus-java'
+rootProject.name = 'otusJava'
 
 include 'hw06-annotations'
