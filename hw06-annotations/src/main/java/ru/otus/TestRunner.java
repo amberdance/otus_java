@@ -12,17 +12,6 @@ import java.util.Objects;
 public class TestRunner {
 
 
-    private static Method getMethodWithAnnotation(Class<?> clazz, Class<? extends Annotation> annotationClass) {
-        for (var method : clazz.getDeclaredMethods()) {
-            if (method.isAnnotationPresent(annotationClass)) {
-                return method;
-            }
-        }
-
-        return null;
-    }
-
-
     public static void testClass(Class<?> testClass) {
         int tests = 0, passed = 0, failed = 0;
         Object instance = instantiate(testClass);
@@ -72,4 +61,15 @@ public class TestRunner {
             throw new RuntimeException(e);
         }
     }
+
+    private static Method getMethodWithAnnotation(Class<?> clazz, Class<? extends Annotation> annotationClass) {
+        for (var method : clazz.getDeclaredMethods()) {
+            if (method.isAnnotationPresent(annotationClass)) {
+                return method;
+            }
+        }
+
+        return null;
+    }
+
 }

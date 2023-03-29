@@ -8,13 +8,13 @@ import static ru.otus.assertions.Assertion.assertEquals;
 import static ru.otus.assertions.Assertion.assertTrue;
 
 public class PangramCheckerTest {
-    private static StringBuilder SOME_INSTANCE = new StringBuilder();
+    private static final StringBuilder SOME_INSTANCE = new StringBuilder();
 
 
     @Before
     void setUp() {
-        SOME_INSTANCE.append(Math.random() * 10);
-        System.out.println("BEFORE");
+        SOME_INSTANCE.append(Math.round(Math.random() * 100));
+        System.out.println("StringBuilder content before -> " + SOME_INSTANCE);
     }
 
     @Test
@@ -45,6 +45,6 @@ public class PangramCheckerTest {
     @After
     void tearDown() {
         SOME_INSTANCE.setLength(0);
-        System.out.println("AFTER");
+        System.out.println("StringBuilder content after -> " + SOME_INSTANCE);
     }
 }
