@@ -10,5 +10,6 @@
 
 
 rootProject.name = 'otusJava'
+include 'hw18-jdbc:demo'
+include 'hw18-jdbc:homework'
 
-include 'hw16-io'
