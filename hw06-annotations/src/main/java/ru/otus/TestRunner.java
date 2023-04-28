@@ -11,7 +11,26 @@ import java.lang.reflect.Method;
 public class TestRunner {
 
 
-    public static void testClass(Class<?> testClass) {
+    private static Object instantiate(Class<?> testClass) {
+        try {
+            return testClass.getDeclaredConstructor().newInstance();
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
+                 NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static Method getMethodWithAnnotation(Class<?> clazz, Class<? extends java.lang.annotation.Annotation> annotationClass) {
+        for (var method : clazz.getDeclaredMethods()) {
+            if (method.isAnnotationPresent(annotationClass)) {
+                return method;
+            }
+        }
+
+        throw new RuntimeException(clazz.getSimpleName() + " should be marked at least one of @Before, @After, @Test annotations");
+    }
+
+    public void testClass(Class<?> testClass) {
         var instance = instantiate(testClass);
         int tests = 0, passed = 0, failed = 0;
         for (var method : testClass.getDeclaredMethods()) {
@@ -42,25 +61,6 @@ public class TestRunner {
         }
 
         System.out.println("Tests run: " + tests + ", Passed: " + passed + ", Failed: " + failed);
-    }
-
-    private static Object instantiate(Class<?> testClass) {
-        try {
-            return testClass.getDeclaredConstructor().newInstance();
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
-                 NoSuchMethodException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private static Method getMethodWithAnnotation(Class<?> clazz, Class<? extends java.lang.annotation.Annotation> annotationClass) {
-        for (var method : clazz.getDeclaredMethods()) {
-            if (method.isAnnotationPresent(annotationClass)) {
-                return method;
-            }
-        }
-
-        throw new RuntimeException(clazz.getSimpleName() + " should be marked at least one of @Before, @After, @Test annotations");
     }
 
 }

@@ -34,6 +34,6 @@ public class PangramCheckerTest {
     @After
     void tearDown() {
         SOME_INSTANCE.setLength(0);
-        System.out.println("StringBuilder content after -> " + SOME_INSTANCE);
+        System.out.println("StringBuilder content after -> " + SOME_INSTANCE.length());
     }
 }
