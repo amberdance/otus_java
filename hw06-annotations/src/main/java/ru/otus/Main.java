@@ -1,7 +1,11 @@
 package ru.otus;
 
+import ru.otus.test.PangramCheckerTest;
+import ru.otus.test.TestRunnerFacade;
+
 public class Main {
+
     public static void main(String[] args) {
-        new TestRunner().testClass(PangramCheckerTest.class);
+        TestRunnerFacade.runTest(PangramCheckerTest.class);
     }
 }

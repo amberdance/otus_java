@@ -1,4 +1,4 @@
-package ru.otus;
+package ru.otus.assertion;
 
 public class AssertionError extends Error {
     private static final String FAIL_MESSAGE = "Expected: %s, Actual: %s";

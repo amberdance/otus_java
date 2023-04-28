@@ -18,7 +18,7 @@ allprojects {
             mavenBom "org.testcontainers:testcontainers-bom:1.17.6"
             mavenBom "com.google.protobuf:protobuf-bom:3.21.12"
         }
-        
+
         dependencies {
             dependency "com.google.guava:guava:31.1-jre"
         }

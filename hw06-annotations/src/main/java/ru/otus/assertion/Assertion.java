@@ -1,4 +1,4 @@
-package ru.otus;
+package ru.otus.assertion;
 
 public class Assertion {
 
