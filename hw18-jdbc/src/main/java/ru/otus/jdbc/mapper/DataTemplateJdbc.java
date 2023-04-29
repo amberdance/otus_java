@@ -49,7 +49,7 @@ public class DataTemplateJdbc<T> implements DataTemplate<T> {
             } catch (Exception e) {
                 throw new DataTemplateException(e);
             }
-        }).orElseThrow(() -> new NullPointerException("Nothing found"));
+        }).orElse(new ArrayList<>());
     }
 
     @Override
