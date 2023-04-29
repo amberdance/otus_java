@@ -7,7 +7,10 @@ import ru.otus.core.repository.DataTemplateException;
 import ru.otus.core.repository.executor.DbExecutor;
 import ru.otus.core.util.EntityReflection;
 
+import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -34,35 +37,34 @@ public class DataTemplateJdbc<T> implements DataTemplate<T> {
         var query = entitySQLMetaData.getSelectAllSql();
         logger.debug(query);
 
-        return dbExecutor.executeSelect(connection, query, Collections.emptyList(), rs -> {
+        return dbExecutor.executeSelect(connection, query, Collections.emptyList(), resultSet -> {
             var result = new ArrayList<T>();
 
             try {
-                while (rs.next()) {
-                    //TODO: Грязно, рефлексия + логика работы с бд, надо обыграть
-                    var entity = entityClassMetaData.getConstructor().newInstance();
-                    var fields = entityClassMetaData.getAllFields();
-
-                    //TODO: То же самое
-                    for (var field : fields) {
-                        field.setAccessible(true);
-                        field.set(entity, rs.getObject(field.getName()));
-                    }
-
-                    result.add(entity);
+                while (resultSet.next()) {
+                    assignFields(resultSet);
                 }
 
                 return result;
-
             } catch (Exception e) {
                 throw new DataTemplateException(e);
             }
-        }).orElseThrow(() -> new RuntimeException("Something was wrong while fetching data"));
+        }).orElseThrow(() -> new NullPointerException("Nothing found"));
     }
 
     @Override
     public Optional<T> findById(Connection connection, long id) {
-        throw new UnsupportedOperationException();
+        var query = entitySQLMetaData.getSelectByIdSql();
+        logger.debug(query);
+
+        return dbExecutor.executeSelect(connection, query, Collections.singletonList(id), resultSet -> {
+            try {
+                resultSet.next();
+                return assignFields(resultSet);
+            } catch (Exception e) {
+                throw new DataTemplateException(e);
+            }
+        });
     }
 
     @Override
@@ -81,6 +83,29 @@ public class DataTemplateJdbc<T> implements DataTemplate<T> {
     @Override
     public void update(Connection connection, T entity) {
         throw new UnsupportedOperationException();
+    }
+
+    private T assignFields(ResultSet rs) {
+        T entity = null;
+
+        try {
+            entity = entityClassMetaData.getConstructor().newInstance();
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
+            throw new RuntimeException("Cannot instantiate " + entity);
+        }
+
+        var fields = entityClassMetaData.getAllFields();
+
+        for (var field : fields) {
+            try {
+                field.setAccessible(true);
+                field.set(entity, rs.getObject(field.getName()));
+            } catch (IllegalAccessException | SQLException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        return entity;
     }
 
 }

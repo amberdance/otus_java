@@ -44,14 +44,14 @@ public class Main {
         dbServiceClient.saveClient(new Client("ClientFirst"));
 
         var clientSecond = dbServiceClient.saveClient(new Client("ClientSecond"));
-//        var clientSecondSelected = dbServiceClient.getClient(clientSecond.getId())
-//                .orElseThrow(() -> new RuntimeException("Client not found, id:" + clientSecond.getId()));
+        var clientSecondSelected = dbServiceClient.getClient(clientSecond.getId())
+                .orElseThrow(() -> new RuntimeException("Client not found, id:" + clientSecond.getId()));
 
-//        log.info("ClientSecondSelected:{}", clientSecondSelected);
+        log.info("ClientSecondSelected:{}", clientSecondSelected);
     }
 
     private static void processManagerLogic() {
-        EntityClassMetaData<Manager> entityClassMetaDataManager = new EntityClassMetaDataImpl<>(new EntityReflection(Manager.class));
+        EntityClassMetaData<Manager> entityClassMetaDataManager = new EntityClassMetaDataImpl<>(new EntityReflection<>(Manager.class));
         EntitySQLMetaData entitySQLMetaDataManager = new EntitySQLMetaDataImpl(entityClassMetaDataManager, new SqlQueryBuilder());
 
         var dataTemplateManager = new DataTemplateJdbc<>(dbExecutor, entitySQLMetaDataManager, entityClassMetaDataManager);
@@ -60,10 +60,10 @@ public class Main {
         dbServiceManager.saveManager(new Manager("ManagerFirst"));
 
         var managerSecond = dbServiceManager.saveManager(new Manager("ManagerSecond"));
-//        var managerSecondSelected = dbServiceManager.getManager(managerSecond.getNo())
-//                .orElseThrow(() -> new RuntimeException("Manager not found, id:" + managerSecond.getNo()));
+        var managerSecondSelected = dbServiceManager.getManager(managerSecond.getNo())
+                .orElseThrow(() -> new RuntimeException("Manager not found, id:" + managerSecond.getNo()));
 
-//        log.info("ManagerSecondSelected:{}", managerSecondSelected);
+        log.info("ManagerSecondSelected:{}", managerSecondSelected);
     }
 
 

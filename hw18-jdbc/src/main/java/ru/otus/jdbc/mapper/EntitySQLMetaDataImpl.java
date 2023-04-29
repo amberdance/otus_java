@@ -25,7 +25,7 @@ public class EntitySQLMetaDataImpl implements EntitySQLMetaData {
 
     @Override
     public String getSelectByIdSql() {
-        throw new UnsupportedOperationException();
+        return queryBuilder.selectById(table, metaData.getIdField().getName());
     }
 
     @Override

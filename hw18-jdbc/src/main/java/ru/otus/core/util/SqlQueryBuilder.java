@@ -28,7 +28,17 @@ public class SqlQueryBuilder implements QueryBuilder {
 
     @Override
     public String selectById(String table, Object id) {
-        throw new UnsupportedOperationException();
+        flushQuery();
+
+        query.append(SELECT_ALL)
+                .append(FROM)
+                .append(table)
+                .append(WHERE)
+                .append(id)
+                .append(EQUALS)
+                .append("(?)");
+
+        return buildQuery();
     }
 
     @Override
