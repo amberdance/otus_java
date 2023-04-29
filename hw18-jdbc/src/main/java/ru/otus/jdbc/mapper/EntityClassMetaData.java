@@ -5,7 +5,7 @@ import java.lang.reflect.Field;
 import java.util.List;
 
 
-public interface EntityClassMetaData<T extends Entity> {
+public interface EntityClassMetaData<T> {
     String getName();
 
     Constructor<T> getConstructor();

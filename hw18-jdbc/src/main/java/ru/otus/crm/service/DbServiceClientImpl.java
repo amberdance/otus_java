@@ -23,14 +23,17 @@ public class DbServiceClientImpl implements DBServiceClient {
     @Override
     public Client saveClient(Client client) {
         return transactionRunner.doInTransaction(connection -> {
-            if (client.getId() == null) {
+            if (isInsertQuery(client)) {
                 var clientId = dataTemplate.insert(connection, client);
                 var createdClient = new Client(clientId, client.getName());
-                log.info("created client: {}", createdClient);
+                log.info("Created client: {}", createdClient);
+
                 return createdClient;
+            } else {
+                dataTemplate.update(connection, client);
+                log.info("Updated client: {}", client);
             }
-            dataTemplate.update(connection, client);
-            log.info("updated client: {}", client);
+
             return client;
         });
     }
@@ -39,7 +42,8 @@ public class DbServiceClientImpl implements DBServiceClient {
     public Optional<Client> getClient(long id) {
         return transactionRunner.doInTransaction(connection -> {
             var clientOptional = dataTemplate.findById(connection, id);
-            log.info("client: {}", clientOptional);
+            log.info("Client: {}", clientOptional);
+
             return clientOptional;
         });
     }
@@ -48,8 +52,13 @@ public class DbServiceClientImpl implements DBServiceClient {
     public List<Client> findAll() {
         return transactionRunner.doInTransaction(connection -> {
             var clientList = dataTemplate.findAll(connection);
-            log.info("clientList:{}", clientList);
+            log.info("Clients list:{}", clientList);
+
             return clientList;
-       });
+        });
+    }
+
+    private boolean isInsertQuery(Client client) {
+        return client.getId() == null;
     }
 }

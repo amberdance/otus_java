@@ -3,15 +3,16 @@ package ru.otus.core.util;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import java.util.List;
 
-class EntityReflectionMetaTest {
+import static org.junit.jupiter.api.Assertions.*;
+
+class EntityReflectionTest {
     private static final ClientEntity client = new ClientEntity("1", "Client");
     private static final ManagerEntity manager = new ManagerEntity(1L, "Manager", "TestParam");
-    private static final EntityReflectionMeta clientReflection = new EntityReflectionMeta(client.getClass());
-    private static final EntityReflectionMeta managerReflection = new EntityReflectionMeta(manager.getClass());
-    private static final EntityReflectionMeta testEntityReflection = new EntityReflectionMeta(TestEntity.class);
+    private static final EntityReflection<ClientEntity> clientReflection = new EntityReflection<>(ClientEntity.class);
+    private static final EntityReflection<ManagerEntity> managerReflection = new EntityReflection<>(ManagerEntity.class);
+    private static final EntityReflection<TestEntity> testEntityReflection = new EntityReflection<>(TestEntity.class);
 
     @Test
     @DisplayName("Проверка на соответствие по количеству полей")
@@ -63,16 +64,22 @@ class EntityReflectionMetaTest {
     @Test
     @DisplayName("Получение конструктора с заданными типами параметров")
     void testGetConstructorOnClient() throws NoSuchMethodException {
-        assertEquals(true, ClientEntity.class.getConstructor(String.class, String.class).equals(clientReflection.getConstructor(String.class, String.class)));
-        assertEquals(true, ManagerEntity.class.getConstructor(long.class, String.class, String.class).equals(managerReflection.getConstructor(long.class, String.class, String.class)));
+        assertTrue(ClientEntity.class.getConstructor(String.class, String.class).equals(clientReflection.getConstructor(String.class, String.class)));
+        assertTrue(ManagerEntity.class.getConstructor(long.class, String.class, String.class).equals(managerReflection.getConstructor(long.class, String.class, String.class)));
     }
 
 
     @Test
     @DisplayName("Значение приватных полей id соответствуют заданным при инициализации классов ManagerEntity, ClientEntity")
     void testGetIdFieldValue() throws IllegalAccessException {
-        assertEquals(client.getId(), clientReflection.getIdFieldValue(clientReflection.getIdField(), client));
-        assertEquals(manager.getId(), managerReflection.getIdFieldValue(managerReflection.getIdField(), manager));
+        assertEquals(client.getId(), clientReflection.getFieldValue(clientReflection.getIdField(), client));
+        assertEquals(manager.getId(), managerReflection.getFieldValue(managerReflection.getIdField(), manager));
+    }
 
+    @Test
+    @DisplayName("Значения всех полей должны соответствовать полученным значениям из метода")
+    void testGetFieldsValues() {
+        assertIterableEquals(List.of(client.getId(), client.getName()), EntityReflection.getFieldValues(client));
+        assertIterableEquals(List.of(manager.getId(), manager.getName(), manager.getSomeParam()), EntityReflection.getFieldValues(manager));
     }
 }

@@ -1,12 +1,11 @@
 package ru.otus.crm.model;
 
 
-import ru.otus.jdbc.mapper.Entity;
 import ru.otus.jdbc.annotation.Id;
 import ru.otus.jdbc.annotation.Table;
 
 @Table(name = "client")
-public class Client implements Entity {
+public class Client {
 
     @Id
     private Long id;

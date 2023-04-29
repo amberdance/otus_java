@@ -2,20 +2,25 @@ package ru.otus.core.util;
 
 import ru.otus.jdbc.annotation.Id;
 import ru.otus.jdbc.annotation.Table;
-import ru.otus.jdbc.mapper.Entity;
 
 @Table(name = "clients")
-public class ClientEntity implements Entity {
+public class ClientEntity {
     @Id
-    private String id;
-    private String name;
+    private final String id;
+    private final String name;
 
     public ClientEntity(String id, String name) {
         this.id = id;
         this.name = name;
     }
 
+    public String getName() {
+        return name;
+    }
+
     public String getId() {
         return id;
     }
+
+
 }

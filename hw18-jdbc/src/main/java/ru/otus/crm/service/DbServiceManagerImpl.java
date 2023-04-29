@@ -11,7 +11,6 @@ import java.util.Optional;
 
 public class DbServiceManagerImpl implements DBServiceManager {
     private static final Logger log = LoggerFactory.getLogger(DbServiceManagerImpl.class);
-
     private final DataTemplate<Manager> managerDataTemplate;
     private final TransactionRunner transactionRunner;
 
@@ -23,14 +22,17 @@ public class DbServiceManagerImpl implements DBServiceManager {
     @Override
     public Manager saveManager(Manager manager) {
         return transactionRunner.doInTransaction(connection -> {
-            if (manager.getNo() == null) {
+            if (isInsertQuery(manager)) {
                 var managerNo = managerDataTemplate.insert(connection, manager);
                 var createdManager = new Manager(managerNo, manager.getLabel(), manager.getParam1());
-                log.info("created manager: {}", createdManager);
+                log.info("Created manager: {}", createdManager);
+
                 return createdManager;
+            } else {
+                managerDataTemplate.update(connection, manager);
+                log.info("Updated manager: {}", manager);
             }
-            managerDataTemplate.update(connection, manager);
-            log.info("updated manager: {}", manager);
+
             return manager;
         });
     }
@@ -39,7 +41,8 @@ public class DbServiceManagerImpl implements DBServiceManager {
     public Optional<Manager> getManager(long no) {
         return transactionRunner.doInTransaction(connection -> {
             var managerOptional = managerDataTemplate.findById(connection, no);
-            log.info("manager: {}", managerOptional);
+            log.info("Manager: {}", managerOptional);
+
             return managerOptional;
         });
     }
@@ -48,8 +51,13 @@ public class DbServiceManagerImpl implements DBServiceManager {
     public List<Manager> findAll() {
         return transactionRunner.doInTransaction(connection -> {
             var managerList = managerDataTemplate.findAll(connection);
-            log.info("managerList:{}", managerList);
+            log.info("Manager list:{}", managerList);
+
             return managerList;
-       });
+        });
+    }
+
+    private boolean isInsertQuery(Manager manager) {
+        return manager.getNo() == null;
     }
 }
