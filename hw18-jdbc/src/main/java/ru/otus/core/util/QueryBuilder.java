@@ -9,7 +9,7 @@ public interface QueryBuilder {
 
     String insert(String table, List<String> fields);
 
-    String update(String table, Object id, List<String> fields);
+    String update(String table, String fieldIdName, List<String> fields);
 
     String deleteAll(String table);
 }

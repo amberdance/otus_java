@@ -82,7 +82,21 @@ public class DataTemplateJdbc<T> implements DataTemplate<T> {
 
     @Override
     public void update(Connection connection, T entity) {
-        throw new UnsupportedOperationException();
+        var query = entitySQLMetaData.getUpdateSql();
+        var fields = entityClassMetaData.getFieldsWithoutId();
+        var params = new ArrayList<>();
+
+        try {
+            for (var field : fields) {
+                field.setAccessible(true);
+                params.add(field.get(entity));
+            }
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException("Cannot get field value");
+        }
+
+        logger.debug(query);
+        dbExecutor.executeStatement(connection, query, params);
     }
 
     private T assignFields(ResultSet rs) {

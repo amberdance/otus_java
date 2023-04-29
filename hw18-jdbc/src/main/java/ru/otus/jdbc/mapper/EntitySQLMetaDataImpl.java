@@ -35,7 +35,7 @@ public class EntitySQLMetaDataImpl implements EntitySQLMetaData {
 
     @Override
     public String getUpdateSql() {
-        throw new UnsupportedOperationException();
+        return queryBuilder.update(table, metaData.getIdField().getName(), metaData.getFieldsWithoutId().stream().map(Field::getName).toList());
     }
 
 }

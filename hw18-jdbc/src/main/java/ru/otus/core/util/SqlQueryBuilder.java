@@ -12,6 +12,7 @@ public class SqlQueryBuilder implements QueryBuilder {
     public static final String SET = " SET ";
     public static final String VALUES = " VALUES ";
     public static final String EQUALS = " = ";
+    public static final String PLACEHOLDER = "?";
     public static final String EOL = ";";
     private final StringBuilder query = new StringBuilder();
 
@@ -36,7 +37,7 @@ public class SqlQueryBuilder implements QueryBuilder {
                 .append(WHERE)
                 .append(id)
                 .append(EQUALS)
-                .append("(?)");
+                .append(PLACEHOLDER);
 
         return buildQuery();
     }
@@ -56,9 +57,21 @@ public class SqlQueryBuilder implements QueryBuilder {
 
 
     @Override
-    public String update(String table, Object id, List<String> params) {
-        throw new UnsupportedOperationException();
+    public String update(String table, String fieldIdName, List<String> params) {
+        flushQuery();
+
+        query.append(UPDATE)
+                .append(table)
+                .append(SET)
+                .append(formatUpdateArgs(params))
+                .append(WHERE)
+                .append(fieldIdName)
+                .append(EQUALS)
+                .append(PLACEHOLDER);
+
+        return buildQuery();
     }
+
 
     @Override
     public String deleteAll(String table) {
@@ -90,4 +103,26 @@ public class SqlQueryBuilder implements QueryBuilder {
 
         return size == 1 ? "(?)" : "(" + "?, ".repeat(fields.size() - 1) + "?)";
     }
+
+    private String formatUpdateArgs(List<String> params) {
+        var size = params.size();
+
+        if (size == 1) {
+            return params.get(0) + " = " + PLACEHOLDER;
+        }
+
+        var ans = new StringBuilder();
+
+        for (String param : params) {
+            ans.append(", ")
+                    .append(param)
+                    .append(EQUALS)
+                    .append(PLACEHOLDER);
+        }
+
+        ans.delete(0, 2);
+
+        return ans.toString();
+    }
+
 }

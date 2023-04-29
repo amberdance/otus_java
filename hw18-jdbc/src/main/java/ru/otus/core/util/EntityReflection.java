@@ -35,6 +35,16 @@ public class EntityReflection<T> {
         return result;
     }
 
+    public Object getFieldValue(Field field, Object instance) {
+        try {
+            field.setAccessible(true);
+
+            return field.get(instance);
+        } catch (IllegalAccessException | SecurityException | InaccessibleObjectException e) {
+            throw new RuntimeException("Cannot get value of field: " + field.getName());
+        }
+    }
+
     public String getTableName() {
         try {
             return theClass.getDeclaredAnnotationsByType(Table.class)[0].name();
@@ -62,16 +72,6 @@ public class EntityReflection<T> {
     public Field getIdField() {
         return Arrays.stream(theClass.getDeclaredFields()).findFirst().orElseThrow(() ->
                 new NullPointerException("Make sure that " + theClass.getName() + " has one field with annotation @Id"));
-    }
-
-    public Object getFieldValue(Field field, Object instance) {
-        try {
-            field.setAccessible(true);
-
-            return field.get(instance);
-        } catch (IllegalAccessException | SecurityException | InaccessibleObjectException e) {
-            throw new RuntimeException("Cannot get value of field: " + field.getName());
-        }
     }
 
 }
