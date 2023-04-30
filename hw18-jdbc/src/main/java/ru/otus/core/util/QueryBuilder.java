@@ -3,13 +3,17 @@ package ru.otus.core.util;
 import java.util.List;
 
 public interface QueryBuilder {
-    String selectAll(String table);
+    QueryBuilder select(String... fields);
 
-    String selectById(String table, Object id);
+    QueryBuilder from(String table);
+
+    String where(List<String> fields);
 
     String insert(String table, List<String> fields);
 
-    String update(String table, String fieldIdName, List<String> fields);
+    QueryBuilder update(String table, String fieldIdName, List<String> fields);
 
-    String deleteAll(String table);
+    QueryBuilder delete();
+
+    String build();
 }

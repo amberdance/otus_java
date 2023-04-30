@@ -4,6 +4,9 @@ package ru.otus.jdbc.mapper;
 import ru.otus.core.util.QueryBuilder;
 
 import java.lang.reflect.Field;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 
 public class EntitySQLMetaDataImpl implements EntitySQLMetaData {
@@ -20,22 +23,32 @@ public class EntitySQLMetaDataImpl implements EntitySQLMetaData {
 
     @Override
     public String getSelectAllSql() {
-        return queryBuilder.selectAll(table);
+        return queryBuilder.select(mapFieldsToStrings(metaData.getAllFields()))
+                .from(table)
+                .build();
     }
 
     @Override
     public String getSelectByIdSql() {
-        return queryBuilder.selectById(table, metaData.getIdField().getName());
+        return queryBuilder.select(mapFieldsToStrings(metaData.getAllFields()))
+                .from(table)
+                .where(Collections.singletonList(metaData.getIdField().getName()));
     }
 
     @Override
     public String getInsertSql() {
-        return queryBuilder.insert(table, metaData.getFieldsWithoutId().stream().map(Field::getName).toList());
+        return queryBuilder.insert(table, Arrays.stream(mapFieldsToStrings(metaData.getFieldsWithoutId())).toList());
     }
 
     @Override
     public String getUpdateSql() {
-        return queryBuilder.update(table, metaData.getIdField().getName(), metaData.getFieldsWithoutId().stream().map(Field::getName).toList());
+        return queryBuilder.update(table, metaData.getIdField().getName(),
+                        Arrays.stream(mapFieldsToStrings(metaData.getFieldsWithoutId())).toList())
+                .where(Collections.emptyList());
+    }
+
+    private String[] mapFieldsToStrings(List<Field> fields) {
+        return fields.stream().map(Field::getName).toArray(String[]::new);
     }
 
 }

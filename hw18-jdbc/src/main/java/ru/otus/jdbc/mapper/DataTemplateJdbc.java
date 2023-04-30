@@ -1,7 +1,5 @@
 package ru.otus.jdbc.mapper;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import ru.otus.core.repository.DataTemplate;
 import ru.otus.core.repository.DataTemplateException;
 import ru.otus.core.repository.executor.DbExecutor;
@@ -19,7 +17,6 @@ import java.util.Optional;
 
 public class DataTemplateJdbc<T> implements DataTemplate<T> {
 
-    private final static Logger logger = LoggerFactory.getLogger(DataTemplateJdbc.class);
     private final DbExecutor dbExecutor;
     private final EntitySQLMetaData entitySQLMetaData;
     private final EntityClassMetaData<T> entityClassMetaData;
@@ -28,16 +25,13 @@ public class DataTemplateJdbc<T> implements DataTemplate<T> {
         this.dbExecutor = dbExecutor;
         this.entitySQLMetaData = entitySQLMetaData;
 
-        //TODO: Обыграть внедрение этой зависимости
+        //TODO: Обойти внедрение этой зависимости
         this.entityClassMetaData = entityClassMetaData;
     }
 
     @Override
     public List<T> findAll(Connection connection) {
-        var query = entitySQLMetaData.getSelectAllSql();
-        logger.debug(query);
-
-        return dbExecutor.executeSelect(connection, query, Collections.emptyList(), resultSet -> {
+        return dbExecutor.executeSelect(connection, entitySQLMetaData.getSelectAllSql(), Collections.emptyList(), resultSet -> {
             var result = new ArrayList<T>();
 
             try {
@@ -54,10 +48,7 @@ public class DataTemplateJdbc<T> implements DataTemplate<T> {
 
     @Override
     public Optional<T> findById(Connection connection, long id) {
-        var query = entitySQLMetaData.getSelectByIdSql();
-        logger.debug(query);
-
-        return dbExecutor.executeSelect(connection, query, Collections.singletonList(id), resultSet -> {
+        return dbExecutor.executeSelect(connection, entitySQLMetaData.getSelectByIdSql(), Collections.singletonList(id), resultSet -> {
             try {
                 resultSet.next();
                 return assignFields(resultSet);
@@ -69,12 +60,10 @@ public class DataTemplateJdbc<T> implements DataTemplate<T> {
 
     @Override
     public long insert(Connection connection, T entity) {
-        var query = entitySQLMetaData.getInsertSql();
         var params = EntityReflection.getFieldValues(entity, entityClassMetaData.getIdField().getName());
-        logger.debug(query);
 
         try {
-            return dbExecutor.executeStatement(connection, query, params);
+            return dbExecutor.executeStatement(connection, entitySQLMetaData.getInsertSql(), params);
         } catch (Exception e) {
             throw new DataTemplateException(e);
         }
@@ -82,7 +71,6 @@ public class DataTemplateJdbc<T> implements DataTemplate<T> {
 
     @Override
     public void update(Connection connection, T entity) {
-        var query = entitySQLMetaData.getUpdateSql();
         var fields = entityClassMetaData.getFieldsWithoutId();
         var params = new ArrayList<>();
 
@@ -95,8 +83,7 @@ public class DataTemplateJdbc<T> implements DataTemplate<T> {
             throw new RuntimeException("Cannot get field value");
         }
 
-        logger.debug(query);
-        dbExecutor.executeStatement(connection, query, params);
+        dbExecutor.executeStatement(connection, entitySQLMetaData.getUpdateSql(), params);
     }
 
     private T assignFields(ResultSet rs) {

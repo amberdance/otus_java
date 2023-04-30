@@ -1,100 +1,106 @@
 package ru.otus.core.util;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.List;
 
 public class SqlQueryBuilder implements QueryBuilder {
-    public static final String SELECT_ALL = "SELECT *";
-    public static final String INSERT = "INSERT INTO ";
-    public static final String UPDATE = "UPDATE ";
-    public static final String DELETE = "DELETE ";
-    public static final String FROM = " FROM ";
-    public static final String WHERE = " WHERE ";
-    public static final String SET = " SET ";
-    public static final String VALUES = " VALUES ";
-    public static final String EQUALS = " = ";
+
+    public static final String EQ = " = ";
     public static final String PLACEHOLDER = "?";
     public static final String EOL = ";";
+    private static final Logger log = LoggerFactory.getLogger(SqlQueryBuilder.class);
     private final StringBuilder query = new StringBuilder();
 
     @Override
-    public String selectAll(String table) {
-        flushQuery();
+    public QueryBuilder select(String... fields) {
+        query.append("SELECT ");
 
-        query.append(SELECT_ALL)
-                .append(FROM)
-                .append(table);
+        if (fields.length == 0) query.append("*");
+        else {
+            var len = fields.length - 1;
 
-        return buildQuery();
+            for (int i = 0; i < len; i++) {
+                query.append(fields[i]).append(", ");
+            }
+
+            query.append(fields[len]);
+        }
+
+        return this;
     }
 
     @Override
-    public String selectById(String table, Object id) {
-        flushQuery();
+    public QueryBuilder from(String table) {
+        query.append(" FROM ").append(table);
 
-        query.append(SELECT_ALL)
-                .append(FROM)
-                .append(table)
-                .append(WHERE)
-                .append(id)
-                .append(EQUALS)
-                .append(PLACEHOLDER);
+        return this;
+    }
 
-        return buildQuery();
+    @Override
+    public String where(List<String> fields) {
+        query.append(" WHERE ");
+
+        if (fields.size() == 1) {
+            query.append(fields.get(0))
+                    .append(EQ)
+                    .append(PLACEHOLDER);
+        } else {
+            for (var field : fields) {
+                query.append(field)
+                        .append(EQ)
+                        .append(PLACEHOLDER);
+            }
+        }
+
+        return build();
     }
 
     @Override
     public String insert(String table, List<String> fields) {
-        flushQuery();
-
-        query.append(INSERT)
+        query.append("INSERT INTO ")
                 .append(table)
-                .append(formatFields(fields))
-                .append(VALUES)
+                .append(formatInsertParams(fields))
+                .append(" VALUES ")
                 .append(formatPlaceholders(fields));
 
-        return buildQuery();
+        return build();
     }
 
-
     @Override
-    public String update(String table, String fieldIdName, List<String> params) {
-        flushQuery();
-
-        query.append(UPDATE)
+    public QueryBuilder update(String table, String fieldIdName, List<String> fields) {
+        query.append("UPDATE ")
                 .append(table)
-                .append(SET)
-                .append(formatUpdateArgs(params))
-                .append(WHERE)
-                .append(fieldIdName)
-                .append(EQUALS)
-                .append(PLACEHOLDER);
+                .append(" SET ")
+                .append(formatUpdateArgs(fields));
 
-        return buildQuery();
+        return this;
     }
-
 
     @Override
-    public String deleteAll(String table) {
-        flushQuery();
+    public QueryBuilder delete() {
+        query.append("DELETE");
 
-        query.append(DELETE)
-                .append(FROM)
-                .append(table);
-
-        return buildQuery();
+        return this;
     }
 
-    private String buildQuery() {
+    @Override
+    public String build() {
         query.append(EOL);
+        var res = query.toString();
 
-        return query.toString();
+        flushQuery();
+        log.debug(res);
+
+        return res;
     }
 
     private void flushQuery() {
         query.setLength(0);
     }
 
-    private String formatFields(List<String> fields) {
+    private String formatInsertParams(List<String> fields) {
         return " (" + String.join(", ", fields) + ")";
     }
 
@@ -116,7 +122,7 @@ public class SqlQueryBuilder implements QueryBuilder {
         for (String param : params) {
             ans.append(", ")
                     .append(param)
-                    .append(EQUALS)
+                    .append(EQ)
                     .append(PLACEHOLDER);
         }
 
@@ -124,5 +130,4 @@ public class SqlQueryBuilder implements QueryBuilder {
 
         return ans.toString();
     }
-
 }
