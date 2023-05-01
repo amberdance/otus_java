@@ -10,5 +10,8 @@
 
 
 rootProject.name = 'otusJava'
-
-include 'hw06-annotations'
+include 'hw01-gradle'
+include 'hw04-generics'
+include 'hw08-gc'
+include 'hw10-bytecodes'
+include 'hw18-jdbc'
