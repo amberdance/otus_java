@@ -1,13 +1,10 @@
 package ru.otus.test;
 
-import ru.otus.PangramChecker;
 import ru.otus.annotation.After;
 import ru.otus.annotation.Before;
 import ru.otus.annotation.Test;
 
-import static ru.otus.assertion.Assertion.assertTrue;
-
-public class PangramCheckerTest {
+public class TestClass {
     private static final StringBuilder SOME_INSTANCE = new StringBuilder();
 
     @Before
@@ -17,17 +14,15 @@ public class PangramCheckerTest {
 
     @Test
     void test1() {
-        assertTrue(true, PangramChecker.isPangram("The quick brown fox jumps over the lazy dog"));
+        throw new RuntimeException("Test failed");
     }
 
     @Test
     void test2() {
-        assertTrue(false, PangramChecker.isPangram("You shall not pass!"));
     }
 
     @Test
     void test3() {
-        assertTrue(true, PangramChecker.isPangram("ASxzc123g,m,m,m,motiu435h13kj12hkj3kjh12jk3"));
     }
 
 

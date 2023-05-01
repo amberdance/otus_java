@@ -18,26 +18,44 @@ import java.util.Map;
 public class TestRunner implements Runner {
     private static final Logger logger = LoggerFactory.getLogger(TestRunner.class);
     private final Class<?> testClass;
-    private final List<Class<? extends Annotation>> allowedAnnotations = List.of(Test.class, After.class, Before.class);
     private final Resultable<String, Integer> results;
-    private Map<Class<? extends Annotation>, List<Method>> testClassMethods;
+    private final Map<Class<? extends Annotation>, List<Method>> testClassMethods = new HashMap<>() {{
+        put(Test.class, new ArrayList<>());
+        put(Before.class, new ArrayList<>());
+        put(After.class, new ArrayList<>());
+    }};
     private Object testInstance;
 
     public TestRunner(Class<?> testClass, Resultable<String, Integer> results) {
         this.testClass = testClass;
         this.results = results;
 
-        initEmptyMapOfClassMethods();
-        collectMethods();
+        groupMethodsIntoMap();
         validateMethods();
     }
 
-    private void initEmptyMapOfClassMethods() {
-        testClassMethods = new HashMap<>();
+    @Override
+    public void run() {
+        instantiateTestClass();
+        logger.info("New instance of test class created: {}", testInstance);
 
-        for (var anno : allowedAnnotations) {
-            testClassMethods.put(anno, new ArrayList<>());
+        try {
+            invokeSingleMethod(testClassMethods.get(Before.class).get(0));
+            runTests(testClassMethods.get(Test.class));
+        } finally {
+            invokeSingleMethod(testClassMethods.get(After.class).get(0));
+            results.print();
         }
+    }
+
+    private void groupMethodsIntoMap() {
+        for (var method : testClass.getDeclaredMethods()) {
+            for (var anno : testClassMethods.keySet()) {
+                if (method.isAnnotationPresent(anno)) testClassMethods.get(anno).add(method);
+            }
+        }
+
+        results.setValue(Values.STATS_TEST_KEY.getValue(), testClassMethods.get(Test.class).size());
     }
 
     private void validateMethods() {
@@ -48,17 +66,6 @@ public class TestRunner implements Runner {
         });
     }
 
-    private void collectMethods() {
-        for (var method : testClass.getDeclaredMethods()) {
-            for (var anno : allowedAnnotations) {
-                if (method.isAnnotationPresent(anno)) testClassMethods.get(anno).add(method);
-            }
-        }
-
-        results.setValue(Values.STATS_TEST_KEY.getValue(), testClassMethods.get(Test.class).size());
-    }
-
-
     private void instantiateTestClass() {
         try {
             testInstance = testClass.getDeclaredConstructor().newInstance();
@@ -68,34 +75,17 @@ public class TestRunner implements Runner {
         }
     }
 
-    @Override
-    public void run() {
-        instantiateTestClass();
-        logger.info("New instance of test class created: " + testInstance);
-
+    private void invokeSingleMethod(Method method) {
         try {
-            runBefore();
-            runTests();
-        } finally {
-            runAfter();
-            results.print();
-        }
-    }
-
-
-    private void runAfter() {
-        var afterMethod = testClassMethods.get(After.class).get(0);
-
-        try {
-            logger.info("Calling @After method: {}", afterMethod);
-            testClassMethods.get(After.class).get(0).invoke(testInstance);
-        } catch (IllegalAccessException | InvocationTargetException e) {
+            logger.info("Calling {} method", method.getDeclaredAnnotations()[0]);
+            method.invoke(testInstance);
+        } catch (IllegalAccessException | InvocationTargetException | NullPointerException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private void runTests() {
-        for (var method : testClassMethods.get(Test.class)) {
+    private void runTests(List<Method> methods) {
+        for (var method : methods) {
             try {
                 method.invoke(testInstance);
                 results.incrementValue(Values.STATS_PASSED_KEY.getValue());
@@ -107,14 +97,4 @@ public class TestRunner implements Runner {
         }
     }
 
-    private void runBefore() {
-        var beforeFirstMethod = testClassMethods.get(Before.class).get(0);
-
-        try {
-            logger.info("Calling @Before method: {}", beforeFirstMethod);
-            beforeFirstMethod.invoke(testInstance);
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            throw new RuntimeException(e);
-        }
-    }
 }
