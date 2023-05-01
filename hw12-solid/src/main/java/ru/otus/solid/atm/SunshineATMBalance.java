@@ -9,10 +9,15 @@ import ru.otus.solid.Balance;
 @ToString
 public class SunshineATMBalance implements Balance {
 
+    public static int DEFAULT_CAPACITY = 10000;
     private int remains;
 
     public SunshineATMBalance(int initialCapacity) {
         this.remains = initialCapacity;
+    }
+
+    public SunshineATMBalance() {
+        this.remains = DEFAULT_CAPACITY;
     }
 
     @Override

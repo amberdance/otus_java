@@ -10,7 +10,7 @@ public final class AtmLogger {
     private final static String operationFormat = "*** %s %s: %d. Remains: %d ***";
 
     private AtmLogger() {
-        throw new UnsupportedOperationException("Sorry, but not");
+        throw new UnsupportedOperationException();
     }
 
     public static void logDeposit(int profit, Balance balance) {
