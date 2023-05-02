@@ -2,34 +2,36 @@ package ru.otus.crm.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
-import org.hibernate.Hibernate;
+import lombok.Setter;
 
-import java.util.Objects;
 
+@Entity
+@Table(name = "address")
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
-@Entity(name = "address")
 public class Address {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
-    @Column(name = "street")
+
+    @Column(nullable = false)
     private String street;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        Address address = (Address) o;
-        return id != null && Objects.equals(id, address.id);
-    }
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "client_id", referencedColumnName = "id")
+    private Client client;
 
-    @Override
-    public int hashCode() {
-        return getClass().hashCode();
+
+    public Address(Long id, String street) {
+        this.id = id;
+        this.street = street;
     }
 }
+
+
