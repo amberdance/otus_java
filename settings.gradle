@@ -10,4 +10,4 @@
 
 
 rootProject.name = 'otusJava'
-include 'hw15-structuralPatterns'
+include 'hw21-jpql'
