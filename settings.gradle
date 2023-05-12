@@ -10,5 +10,4 @@
 
 
 rootProject.name = 'otusJava'
-
 include 'hw21-jpql'
