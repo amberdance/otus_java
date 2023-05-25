@@ -10,4 +10,4 @@
 
 
 rootProject.name = 'otusJava'
-include 'hw28-spring-data-jdbc'
+include 'hw22-cache'
