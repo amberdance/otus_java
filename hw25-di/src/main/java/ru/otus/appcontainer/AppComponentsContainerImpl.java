@@ -21,7 +21,6 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
 
     private final static Logger log = LoggerFactory.getLogger(
             AppComponentsContainerImpl.class);
-    private final Map<String, Object> dependencies = new HashMap<>();
     private final List<Object> appComponents = new ArrayList<>();
     private final Map<String, Object> appComponentsByName = new HashMap<>();
 
@@ -48,8 +47,33 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
 
     private void processInjectDependencies(
             Class<?> initialConfigClass) {
-        var instance = instantiate(initialConfigClass);
         var components = getComponents(initialConfigClass);
+        var instance = instantiate(initialConfigClass);
+
+        invokeMethodsWithoutParams(components, instance);
+        invokeMethodsWithParams(components, instance);
+
+
+        return;
+    }
+
+    private List<Method> getComponents(Class<?> initialConfigClass) {
+        var components = ReflectionUtils.get(Methods.of(initialConfigClass))
+                .stream()
+                .filter(method -> method.isAnnotationPresent(
+                        COMPONENT_ANNOTATION_CLASS)).
+                sorted(Comparator.comparingInt(method -> method.getAnnotation(
+                        COMPONENT_ANNOTATION_CLASS).order()))
+                .toList();
+
+        if (components.isEmpty()) {
+            throw new RuntimeException(
+                    "The components could not be loaded, perhaps you forgot to annotate them @" +
+                            COMPONENT_ANNOTATION_CLASS + " ?");
+        }
+
+        log.debug("Found components: {}", components);
+        return components;
     }
 
     private Object instantiate(Class<?> initialConfigClass) {
@@ -69,30 +93,55 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
         }
     }
 
-    private List<Method> getComponents(Class<?> initialConfigClass) {
-        var components = ReflectionUtils.get(Methods.of(initialConfigClass))
-                .stream()
-                .filter(method -> method.isAnnotationPresent(
-                        COMPONENT_ANNOTATION_CLASS)).
-                sorted(Comparator.comparingInt(method -> method.getAnnotation(
-                        COMPONENT_ANNOTATION_CLASS).order()))
-                .sorted(Comparator.comparingInt(Method::getParameterCount))
-                .toList();
 
-        if (components.isEmpty()) {
-            throw new RuntimeException(
-                    "The components could not be loaded, perhaps you forgot to annotate them @" +
-                            COMPONENT_ANNOTATION_CLASS + " ?");
+    private void invokeMethodsWithoutParams(List<Method> components,
+                                            Object instance) {
+        var componentsWithoutParams = components.stream()
+                .filter(method -> method.getParameters().length == 0).toList();
+
+        for (var component : componentsWithoutParams) {
+            var name = getComponentNameByAnnotation(component);
+            var dependency = ReflectionUtils.invoke(component, instance);
+            appComponents.add(dependency);
+            appComponentsByName.put(name, dependency);
         }
+    }
 
-        log.debug("Found components: {}", components);
-        return components;
+    private void invokeMethodsWithParams(List<Method> components,
+                                         Object instance) {
+        var componentsWithoutParams = components.stream()
+                .filter(method -> method.getParameters().length > 0).toList();
+
+        for (var component : componentsWithoutParams) {
+            var name = getComponentNameByAnnotation(component);
+            var params = component.getParameters();
+            var injectComponents = new Object[params.length];
+
+            for (int i = 0; i < params.length; i++) {
+                if (params[i].getType()
+                        .isAssignableFrom(appComponents.get(i).getClass())) {
+                    injectComponents[i] = appComponents.get(i);
+                }
+            }
+
+            var dependency = ReflectionUtils.invoke(component, instance,
+                    injectComponents);
+            appComponents.add(dependency);
+            appComponentsByName.put(name, dependency);
+        }
+    }
+
+
+    private String getComponentNameByAnnotation(Method comp) {
+        return comp.getAnnotation(COMPONENT_ANNOTATION_CLASS).name();
     }
 
 
     @Override
     public <C> C getAppComponent(Class<C> componentClass) {
-        return null;
+        return (C) appComponents.stream()
+                .filter(p -> componentClass.isAssignableFrom(p.getClass()))
+                .findFirst().orElseThrow();
     }
 
     @Override
