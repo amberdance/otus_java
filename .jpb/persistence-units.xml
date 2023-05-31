@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="PersistenceUnitSettings">
+    <persistence-units>
+      <persistence-unit moduleName="otusJava.hw-24-webserver.main" name="Default" defaultSearchScope="Project" />
+      <persistence-unit name="Default">
+        <packages>
+          <package value="ru.otus.data.crm.model" />
+        </packages>
+      </persistence-unit>
+    </persistence-units>
+  </component>
+</project>
