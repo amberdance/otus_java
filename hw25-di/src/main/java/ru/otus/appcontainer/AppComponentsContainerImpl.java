@@ -13,6 +13,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import static org.reflections.ReflectionUtils.Constructors;
 import static org.reflections.ReflectionUtils.Methods;
@@ -47,17 +48,49 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
 
     private void processInjectDependencies(
             Class<?> initialConfigClass) {
-        var components = getComponents(initialConfigClass);
+        var methods = getMethods(initialConfigClass);
         var instance = instantiate(initialConfigClass);
-
-        invokeMethodsWithoutParams(components, instance);
-        invokeMethodsWithParams(components, instance);
-
-
-        return;
+        invokeMethods(methods, instance);
     }
 
-    private List<Method> getComponents(Class<?> initialConfigClass) {
+    private void invokeMethods(List<Method> methods, Object instance) {
+        for (var method : methods) {
+            var name =
+                    method.getAnnotation(COMPONENT_ANNOTATION_CLASS).name();
+
+            if (appComponentsByName.containsKey(name)) {
+                throw new RuntimeException(String.format(
+                        "Duplicate component name conflict, please rename the given component -> %s",
+                        name));
+            }
+
+            try {
+                var component =
+                        method.invoke(instance, injectComponentParams(method));
+                appComponents.add(component);
+                appComponentsByName.put(name, component);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    private Object[] injectComponentParams(Method method) {
+        if (method.getParameterCount() == 0) {
+            return null;
+        }
+
+        var params = method.getParameters();
+        var dependencies = new Object[params.length];
+
+        for (int i = 0; i < params.length; i++) {
+            dependencies[i] = getAppComponent(params[i].getType());
+        }
+
+        return dependencies;
+    }
+
+    private List<Method> getMethods(Class<?> initialConfigClass) {
         var components = ReflectionUtils.get(Methods.of(initialConfigClass))
                 .stream()
                 .filter(method -> method.isAnnotationPresent(
@@ -93,59 +126,34 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
         }
     }
 
-
-    private void invokeMethodsWithoutParams(List<Method> components,
-                                            Object instance) {
-        var componentsWithoutParams = components.stream()
-                .filter(method -> method.getParameters().length == 0).toList();
-
-        for (var component : componentsWithoutParams) {
-            var name = getComponentNameByAnnotation(component);
-            var dependency = ReflectionUtils.invoke(component, instance);
-            appComponents.add(dependency);
-            appComponentsByName.put(name, dependency);
-        }
-    }
-
-    private void invokeMethodsWithParams(List<Method> components,
-                                         Object instance) {
-        var componentsWithoutParams = components.stream()
-                .filter(method -> method.getParameters().length > 0).toList();
-
-        for (var component : componentsWithoutParams) {
-            var name = getComponentNameByAnnotation(component);
-            var params = component.getParameters();
-            var injectComponents = new Object[params.length];
-
-            for (int i = 0; i < params.length; i++) {
-                if (params[i].getType()
-                        .isAssignableFrom(appComponents.get(i).getClass())) {
-                    injectComponents[i] = appComponents.get(i);
-                }
-            }
-
-            var dependency = ReflectionUtils.invoke(component, instance,
-                    injectComponents);
-            appComponents.add(dependency);
-            appComponentsByName.put(name, dependency);
-        }
-    }
-
-
-    private String getComponentNameByAnnotation(Method comp) {
-        return comp.getAnnotation(COMPONENT_ANNOTATION_CLASS).name();
-    }
-
-
     @Override
+    @SuppressWarnings("unchecked")
     public <C> C getAppComponent(Class<C> componentClass) {
-        return (C) appComponents.stream()
-                .filter(p -> componentClass.isAssignableFrom(p.getClass()))
-                .findFirst().orElseThrow();
+        Objects.requireNonNull(componentClass);
+
+        var components =
+                appComponents.stream().filter(componentClass::isInstance)
+                        .toList();
+        var len = components.size();
+
+        if (len == 0) {
+            throw new RuntimeException("Cannot find a suitable dependency");
+        }
+
+        if (len > 1) {
+            throw new RuntimeException(
+                    "Only one instance of a component can exist");
+        }
+
+        return ((C) components.get(0));
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <C> C getAppComponent(String componentName) {
-        return null;
+        var comp = ((C) appComponentsByName.get(componentName));
+        Objects.requireNonNull(comp);
+
+        return comp;
     }
 }
