@@ -1,14 +1,14 @@
-package ru.otus.config;
+package ru.otus.data.util;
 
 import lombok.experimental.UtilityClass;
 import org.flywaydb.core.Flyway;
 import org.hibernate.cfg.Configuration;
 
 @UtilityClass
-public class FlywayMigrationsConfig {
+public class HibernateFlywayMigrations {
 
 
-    public static void migrateTables(Configuration configuration) {
+    public static void migrate(Configuration configuration) {
         var dbUrl = configuration.getProperty("hibernate.connection.url");
         var dbUserName =
                 configuration.getProperty("hibernate.connection.username");

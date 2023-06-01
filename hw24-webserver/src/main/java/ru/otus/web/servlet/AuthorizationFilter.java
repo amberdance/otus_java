@@ -1,15 +1,23 @@
 package ru.otus.web.servlet;
 
 
-import jakarta.servlet.*;
+import jakarta.servlet.Filter;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.FilterConfig;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 
+@Slf4j
 public class AuthorizationFilter implements Filter {
 
+    private static final String REDIRECT_PAGE = "/login";
     private ServletContext context;
 
     @Override
@@ -25,21 +33,15 @@ public class AuthorizationFilter implements Filter {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
 
-        String uri = request.getRequestURI();
-        this.context.log("Requested Resource:" + uri);
+        context.log(String.format("%s: %s", request.getMethod(),
+                request.getRequestURI()));
 
-        HttpSession session = request.getSession(false);
-
-        if (session == null) {
-            response.sendRedirect("/login");
+        if (request.getSession(false) == null) {
+            response.sendRedirect(REDIRECT_PAGE);
         } else {
             filterChain.doFilter(servletRequest, servletResponse);
         }
 
     }
 
-    @Override
-    public void destroy() {
-
-    }
 }

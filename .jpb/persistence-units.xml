@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="PersistenceUnitSettings">
+    <persistence-units>
+      <persistence-unit name="Default">
+        <entities>
+          <entity value="ru.otus.data.crm.model.Phone" />
+          <entity value="ru.otus.data.crm.model.Client" />
+          <entity value="ru.otus.data.crm.model.Address" />
+        </entities>
+      </persistence-unit>
+    </persistence-units>
+  </component>
+</project>

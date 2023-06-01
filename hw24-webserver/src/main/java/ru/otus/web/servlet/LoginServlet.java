@@ -1,39 +1,34 @@
 package ru.otus.web.servlet;
 
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
-import ru.otus.web.services.TemplateProcessor;
-import ru.otus.web.services.UserAuthService;
+import lombok.RequiredArgsConstructor;
+import ru.otus.data.crm.service.ClientService;
+import ru.otus.web.service.TemplateProcessor;
 
 import java.io.IOException;
 import java.util.Collections;
 
 import static jakarta.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
 
+@RequiredArgsConstructor
 public class LoginServlet extends HttpServlet {
 
     private static final String PARAM_LOGIN = "login";
     private static final String PARAM_PASSWORD = "password";
-    private static final int MAX_INACTIVE_INTERVAL = 30;
     private static final String LOGIN_PAGE_TEMPLATE = "login.html";
-
+    private static final String SUCCESS_AUTH_REDIRECT_PAGE = "/clients";
+    private static final int MAX_INACTIVE_INTERVAL = 30;
 
     private final TemplateProcessor templateProcessor;
-    private final UserAuthService userAuthService;
+    private final ClientService clientService;
 
-    public LoginServlet(TemplateProcessor templateProcessor,
-                        UserAuthService userAuthService) {
-        this.userAuthService = userAuthService;
-        this.templateProcessor = templateProcessor;
-    }
 
     @Override
     protected void doGet(HttpServletRequest request,
                          HttpServletResponse response)
-            throws ServletException, IOException {
+            throws IOException {
         response.setContentType("text/html");
         response.getWriter().println(
                 templateProcessor.getPage(LOGIN_PAGE_TEMPLATE,
@@ -44,17 +39,18 @@ public class LoginServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request,
                           HttpServletResponse response) throws IOException {
 
-        String name = request.getParameter(PARAM_LOGIN);
-        String password = request.getParameter(PARAM_PASSWORD);
+        var name = request.getParameter(PARAM_LOGIN);
+        var password = request.getParameter(PARAM_PASSWORD);
 
-        if (userAuthService.authenticate(name, password)) {
-            HttpSession session = request.getSession();
+        if (clientService.authenticate(name, password)) {
+            var session = request.getSession();
             session.setMaxInactiveInterval(MAX_INACTIVE_INTERVAL);
-            response.sendRedirect("/users");
+            response.sendRedirect(SUCCESS_AUTH_REDIRECT_PAGE);
         } else {
             response.setStatus(SC_UNAUTHORIZED);
+            response.getWriter()
+                    .println("Wrong credentials: " + SC_UNAUTHORIZED);
         }
-
     }
 
 }

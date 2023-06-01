@@ -1,6 +1,6 @@
 package ru.otus.data.crm.model;
 
-import jakarta.persistence.CascadeType;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -13,9 +13,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.Hibernate;
-
-import java.util.Objects;
+import lombok.ToString;
 
 @Entity
 @Table(name = "phones")
@@ -23,34 +21,24 @@ import java.util.Objects;
 @NoArgsConstructor
 @Getter
 @Setter
+@ToString
 public class Phone {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true, nullable = false)
+    @Column(name = "number", length = 12, nullable = false)
     private String number;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "client_id")
+    @JsonBackReference
+    @ToString.Exclude
     private Client client;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || Hibernate.getClass(this) !=
-                Hibernate.getClass(o)) {
-            return false;
-        }
-        Phone phone = (Phone) o;
-        return getId() != null && Objects.equals(getId(), phone.getId());
+    public Phone(String number) {
+        this.number = number;
     }
 
-    @Override
-    public int hashCode() {
-        return getClass().hashCode();
-    }
 }

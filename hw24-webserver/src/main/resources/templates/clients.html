@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Clients page</title>
+</head>
+<body>
+<table border="1">
+    <tr>
+        <th>Id</th>
+        <th>Name</th>
+        <th>User name</th>
+        <th>Address</th>
+        <th>Phones</th>
+    </tr>
+    <#list clients as client>
+    <tr>
+        <td>${client.id}</td>
+        <td>${client.name}</td>
+        <td>${client.username}</td>
+        <td>${client.address.getLabel()}</td>
+        <td>
+            <#list client.getPhones() as phone>
+            <p>${phone.number}</p>
+        </#list>
+        </td>
+    </tr>
+</#list>
+</table>
+
+</body>
+</html>
