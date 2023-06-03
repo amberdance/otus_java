@@ -6,7 +6,6 @@ sourceCompatibility = JavaVersion.VERSION_17
 targetCompatibility = JavaVersion.VERSION_17
 
 dependencies {
-    implementation("org.reflections:reflections:${Versions.reflections}")
     implementation("ch.qos.logback:logback-classic")
 
     testImplementation("org.junit.jupiter:junit-jupiter-engine")

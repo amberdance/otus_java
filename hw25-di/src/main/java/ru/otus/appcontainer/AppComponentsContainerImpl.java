@@ -1,6 +1,5 @@
 package ru.otus.appcontainer;
 
-import org.reflections.ReflectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.otus.appcontainer.api.AppComponent;
@@ -9,14 +8,12 @@ import ru.otus.appcontainer.api.AppComponentsContainerConfig;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-
-import static org.reflections.ReflectionUtils.Constructors;
-import static org.reflections.ReflectionUtils.Methods;
 
 public class AppComponentsContainerImpl implements AppComponentsContainer {
 
@@ -91,8 +88,7 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
     }
 
     private List<Method> getMethods(Class<?> initialConfigClass) {
-        var components = ReflectionUtils.get(Methods.of(initialConfigClass))
-                .stream()
+        var components = Arrays.stream(initialConfigClass.getMethods())
                 .filter(method -> method.isAnnotationPresent(
                         COMPONENT_ANNOTATION_CLASS)).
                 sorted(Comparator.comparingInt(method -> method.getAnnotation(
@@ -111,14 +107,7 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
 
     private Object instantiate(Class<?> initialConfigClass) {
         try {
-            var instance =
-                    ReflectionUtils.get(Constructors.of(initialConfigClass))
-                            .stream()
-                            .findFirst()
-                            .orElseThrow()
-                            .newInstance();
-            log.debug("Instance created: {}", instance);
-            return instance;
+            return initialConfigClass.getConstructor().newInstance();
         } catch (Exception e) {
             log.error(e.getLocalizedMessage(), e);
             throw new RuntimeException("Cannot instantiate the given class: " +
