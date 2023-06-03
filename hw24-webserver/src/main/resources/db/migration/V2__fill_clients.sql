@@ -1,6 +1,6 @@
 insert into addresses(label)
 values ('SomeAddressHere')
-returning id as test;
+returning id;
 
 insert into clients(name, username, password, address_id)
 values ('SomeClient', 'admin', 'not_secure', lastval())

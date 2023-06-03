@@ -18,7 +18,6 @@ import java.util.stream.Collectors;
 
 
 @RequiredArgsConstructor
-@Slf4j
 public class ClientsServlet extends HttpServlet {
 
     private final static String CLIENTS_PAGE = "clients.html";
