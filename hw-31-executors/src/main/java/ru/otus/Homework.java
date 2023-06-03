@@ -26,14 +26,18 @@ public class Homework {
         }
     }
 
-    private synchronized void runLoop(boolean first) {
+    private void runLoop(boolean first) {
         while (true) {
             boolean isAscendingLoop = currentValue != ITERATIONS - 1;
 
             for (int i = (isAscendingLoop ? 1 : ITERATIONS);
                  i != (isAscendingLoop ? ITERATIONS : 1);
                  i += (isAscendingLoop ? 1 : -1)) {
-                printNumbers(i, first);
+
+                synchronized (this) {
+                    printNumbers(i, first);
+                }
+
             }
         }
     }
