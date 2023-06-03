@@ -11,6 +11,8 @@ import ru.otus.web.helpers.FileSystemHelper;
 import ru.otus.web.service.TemplateProcessor;
 import ru.otus.web.service.TemplateProcessorImpl;
 
+import java.io.IOException;
+
 @Slf4j
 public class CustomSecurityWebServer implements WebServer {
 
@@ -48,7 +50,7 @@ public class CustomSecurityWebServer implements WebServer {
         server.stop();
     }
 
-    private void initContext() {
+    private void initContext() throws IOException {
         var resourceHandler = createResourceHandler();
         var servletContextHandler = createServletContextHandler();
         var handlers = new HandlerList();
@@ -74,8 +76,9 @@ public class CustomSecurityWebServer implements WebServer {
     private ResourceHandler createResourceHandler() {
         log.debug("Creating resource handlers...");
         var resourceHandler = new ResourceHandler();
+
         resourceHandler.setDirectoriesListed(false);
-        resourceHandler.setWelcomeFiles(new String[] {START_PAGE_NAME});
+        resourceHandler.setWelcomeFiles(new String[]{START_PAGE_NAME});
         resourceHandler.setResourceBase(
                 FileSystemHelper.localFileNameOrResourceNameToFullPath(
                         COMMON_RESOURCES_DIR));

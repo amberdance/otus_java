@@ -15,7 +15,7 @@ import static jakarta.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
 @RequiredArgsConstructor
 public class LoginServlet extends HttpServlet {
 
-    private static final String PARAM_LOGIN = "login";
+    private static final String PARAM_LOGIN = "username";
     private static final String PARAM_PASSWORD = "password";
     private static final String LOGIN_PAGE_TEMPLATE = "login.html";
     private static final String SUCCESS_AUTH_REDIRECT_PAGE = "/clients";
@@ -38,12 +38,10 @@ public class LoginServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request,
                           HttpServletResponse response) throws IOException {
-
-        var name = request.getParameter(PARAM_LOGIN);
-        var password = request.getParameter(PARAM_PASSWORD);
-
-        if (clientService.authenticate(name, password)) {
+        if (clientService.authenticate(request.getParameter(PARAM_LOGIN),
+                request.getParameter(PARAM_PASSWORD))) {
             var session = request.getSession();
+            session.setAttribute("authenticated", true);
             session.setMaxInactiveInterval(MAX_INACTIVE_INTERVAL);
             response.sendRedirect(SUCCESS_AUTH_REDIRECT_PAGE);
         } else {

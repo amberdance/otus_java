@@ -1,22 +1,24 @@
-<html xmlns="http://www.w3.org/1999/xhtml" content="text/html;">
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/styles/bootstrap.min.css">
     <title>Login page</title>
 </head>
-<body>
-<div class="top">
-    <form action="login" method="post">
-        <label>
-            login <br/>
-            <input type="text" name="login" value="admin">
-        </label>
-        <br/>
-        <label>
-            password<br/>
-            <input type="password" name="password" value="not_secure">
-        </label>
-        <br/><br/>
-        <input type="submit" value="Перейти к списку пользователей">
-    </form>
-</div>
-</body>
+<form action="login" method="post">
+    <div class="container" style="max-width: 300px; margin: 12rem auto;">
+        <div class="mb-3">
+            <label for="username" class="username">Username</label>
+            <input type="text" class="form-control" id="username" name="username" value="admin">
+        </div>
+        <div class="mb-3">
+            <label for="password" class="form-label">Password</label>
+            <input type="password" class="form-control" id="password" name="password" value="not_secure">
+        </div>
+        <div>
+            <button type="submit" class="btn btn-primary text-center">Submit</button>
+        </div>
+    </div>
+</form>
 </html>

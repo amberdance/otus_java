@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.eclipse.jetty.http.HttpStatus;
 import ru.otus.data.crm.model.Client;
 import ru.otus.data.crm.service.ClientService;
 import ru.otus.web.service.TemplateProcessor;
@@ -35,12 +36,22 @@ public class ClientsServlet extends HttpServlet {
             if (request.getServletPath().contains("api")) {
                 handleJsonClientsResponse(response, clients);
             } else {
-                handleHtmlClientsReponse(response, clients);
+                handleHtmlClientsResponse(response, clients);
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp)
+            throws IOException {
+        var json = req.getReader().lines()
+                .collect(Collectors.joining(System.lineSeparator()));
+        var client = objectMapper.readValue(json, Client.class);
+        clientService.saveClient(client);
+        resp.setStatus(HttpStatus.CREATED_201);
     }
 
     private void handleJsonClientsResponse(HttpServletResponse response,
@@ -52,8 +63,8 @@ public class ClientsServlet extends HttpServlet {
 
     }
 
-    private void handleHtmlClientsReponse(HttpServletResponse response,
-                                          List<Client> clients)
+    private void handleHtmlClientsResponse(HttpServletResponse response,
+                                           List<Client> clients)
             throws IOException {
         response.setContentType("text/html");
         response.getWriter().println(

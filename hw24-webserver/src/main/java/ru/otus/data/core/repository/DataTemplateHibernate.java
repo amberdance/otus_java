@@ -34,7 +34,7 @@ public class DataTemplateHibernate<T> implements DataTemplate<T> {
     @Override
     public List<T> findAll(Session session) {
         return session.createQuery(
-                        String.format("from %s", clazz.getSimpleName()), clazz)
+                        String.format("from %s order by id desc", clazz.getSimpleName()), clazz)
                 .getResultList();
     }
 
