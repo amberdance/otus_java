@@ -1,0 +1,20 @@
+spring:
+  main:
+    banner-mode: off
+
+  datasource:
+    url: jdbc:h2:mem:test_db;DATABASE_TO_UPPER=false;CASE_INSENSITIVE_IDENTIFIERS=TRUE;DB_CLOSE_ON_EXIT=FALSE;
+    username: sa
+    driver-class-name: org.h2.Driver
+
+  flyway:
+    baseline-on-migrate: true
+
+  h2:
+    console:
+      enabled: true
+
+logging:
+  level:
+    org.hibernate.SQL: debug
+    org.hibernate.type.descriptor.sql.BasicBinder: trace
