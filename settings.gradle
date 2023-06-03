@@ -10,4 +10,4 @@
 
 
 rootProject.name = 'otusJava'
-include 'hw25-di'
+include 'hw12-solid'
