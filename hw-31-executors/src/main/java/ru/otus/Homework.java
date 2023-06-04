@@ -12,48 +12,40 @@ public class Homework {
 
 
     public void run() {
-        var t1 = new Thread(() -> runLoop(true), "Thread-1");
-        var t2 = new Thread(() -> runLoop(false), "Thread-2");
-
-        t1.start();
-        t2.start();
-
-        try {
-            t1.join();
-            t2.join();
-        } catch (InterruptedException e) {
-            log.error(e.getLocalizedMessage(), e);
-        }
+        new Thread(() -> runLoop(true), "Thread-1").start();
+        new Thread(() -> runLoop(false), "Thread-2").start();
     }
 
-    private void runLoop(boolean first) {
-        while (true) {
+    private synchronized void runLoop(boolean first) {
+        while (!Thread.currentThread().isInterrupted()) {
             boolean isAscendingLoop = currentValue != ITERATIONS - 1;
 
             for (int i = (isAscendingLoop ? 1 : ITERATIONS);
                  i != (isAscendingLoop ? ITERATIONS : 1);
                  i += (isAscendingLoop ? 1 : -1)) {
 
-                synchronized (this) {
-                    printNumbers(i, first);
-                }
+                try {
+                    while (first == isFirstThread) {
+                        this.wait();
+                    }
 
+                    isFirstThread = first;
+                    currentValue = i;
+                    log.info(String.valueOf(i));
+                    sleep(100);
+
+                    this.notify();
+                } catch (InterruptedException e) {
+                    log.error(e.getLocalizedMessage(), e);
+                }
             }
         }
     }
 
-    private void printNumbers(int i, boolean first) {
+    @SuppressWarnings("SameParameterValue")
+    private void sleep(long millis) {
         try {
-            while (first == isFirstThread) {
-                this.wait();
-            }
-
-            log.info(String.valueOf(i));
-            isFirstThread = first;
-            currentValue = i;
-
-            this.notify();
-            Thread.sleep(666);
+            Thread.sleep(millis);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
