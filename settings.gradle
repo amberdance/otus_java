@@ -10,4 +10,4 @@
 
 
 rootProject.name = 'otusJava'
-include 'hw-31-executors'
+include 'hw24-webserver'
