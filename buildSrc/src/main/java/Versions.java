@@ -28,5 +28,3 @@ public interface Versions {
     String errorProneAnnotations = "2.11.0";
     String tomcatAnnotationsApi = "6.0.53";
     String grpc = "1.44.1";
-
-}
