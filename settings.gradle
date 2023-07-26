@@ -11,4 +11,5 @@
 
 rootProject.name = 'otusJava'
 
-include 'hw33-multiproccess'
+include 'hw37-webflux:client-service'
+include 'hw37-webflux:datastore-service'
