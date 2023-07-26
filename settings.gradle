@@ -10,4 +10,6 @@
 
 
 rootProject.name = 'otusJava'
-include 'hw24-webserver'
+
+include 'hw37-webflux:client-service'
+include 'hw37-webflux:datastore-service'
