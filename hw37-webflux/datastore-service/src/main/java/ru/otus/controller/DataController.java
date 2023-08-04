@@ -36,7 +36,7 @@ public class DataController {
                 .map(Message::getId)
                 .subscribeOn(workerPool);
 
-        log.info("Got message from chat, Room Id: {}, Message: {}", roomId, message);
+        log.info("Got message from chat, room Id: {}, Message: {}", roomId, message);
 
         return msgId;
     }
@@ -44,7 +44,7 @@ public class DataController {
     @GetMapping(value = "/msg/{roomId}", produces = MediaType.APPLICATION_NDJSON_VALUE)
     public Flux<MessageDto> getMessagesByRoomId(@PathVariable("roomId") String roomId) {
         return Mono.just(roomId)
-                .doOnNext(room -> log.info("Got message by rom id: {}", room))
+                .doOnNext(room -> log.info("Got message by room id: {}", room))
                 .flatMapMany(dataStoreService::findMessageByRoomId)
                 .map(message -> new MessageDto(message.getMsgText()))
                 .doOnNext(msgDto -> log.info("Converted message to dto: {}", msgDto))
