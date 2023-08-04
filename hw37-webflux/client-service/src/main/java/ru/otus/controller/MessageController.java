@@ -37,10 +37,8 @@ public class MessageController {
             return;
         }
 
-        template.convertAndSend(String.format("%s%s", TOPIC_TEMPLATE, roomId),
-                new Message(HtmlUtils.htmlEscape(message.message())));
-        log.info("Got message: {} from room id: {}", message.message(), roomId);
-        saveMessage(roomId, message).subscribe(msgId -> log.info("Message sent with id:{}", msgId));
+        saveMessage(roomId, message).doOnNext(msg -> sendMessage(roomId, message))
+                .subscribe(msgId -> log.info("Message sent with id:{}", msgId));
     }
 
     private boolean isRoomRestricted(String roomId) {
@@ -73,7 +71,8 @@ public class MessageController {
         return datastoreClient.post().uri(String.format("/msg/%s", roomId))
                 .accept(MediaType.APPLICATION_JSON)
                 .bodyValue(message)
-                .exchangeToMono(response -> response.bodyToMono(Long.class));
+                .exchangeToMono(response -> response.bodyToMono(Long.class))
+                .doOnNext(msg -> sendMessage(RESTRICTED_ROOM, message));
     }
 
     private Flux<Message> getMessagesForAllRooms() {
@@ -92,6 +91,11 @@ public class MessageController {
 
     private boolean isHttpResponseOk(ClientResponse clientResponse) {
         return clientResponse.statusCode().equals(HttpStatus.OK);
+    }
+
+    private void sendMessage(String roomId, Message message) {
+        template.convertAndSend(String.format("%s%s", TOPIC_TEMPLATE, roomId),
+                new Message(HtmlUtils.htmlEscape(message.message())));
     }
 
 }
