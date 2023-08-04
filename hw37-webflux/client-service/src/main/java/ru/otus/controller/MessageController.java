@@ -31,19 +31,20 @@ public class MessageController {
 
     @MessageMapping("/message.{roomId}")
     public void getMessage(@DestinationVariable String roomId, Message message) {
+        log.info("Got message: {} from room id: {}", message.message(), roomId);
+        saveMessage(roomId, message).subscribe(msgId -> log.info("Message sent with id:{}", msgId));
+
         if (isRoomRestricted(roomId)) {
             return;
         }
 
-        log.info("Got message: {} from room id: {}", message.message(), roomId);
-        saveMessage(roomId, message).subscribe(msgId -> log.info("Message sent with id:{}", msgId));
-        template.convertAndSend(String.format("%s%s", TOPIC_TEMPLATE, roomId), new Message(HtmlUtils.htmlEscape(message.message())));
+        template.convertAndSend(String.format("%s%s", TOPIC_TEMPLATE, roomId),
+                new Message(HtmlUtils.htmlEscape(message.message())));
     }
 
     private boolean isRoomRestricted(String roomId) {
         return roomId.equals(RESTRICTED_ROOM);
     }
-
 
     @EventListener
     public void handleSessionSubscribeEvent(SessionSubscribeEvent event) {
@@ -86,25 +87,16 @@ public class MessageController {
     private Flux<Message> getMessagesForAllRooms() {
         return datastoreClient.get().uri("/msg/all")
                 .accept(MediaType.APPLICATION_NDJSON)
-                .exchangeToFlux(response -> {
-                    if (isHttpResponseOk(response)) {
-                        return response.bodyToFlux(Message.class);
-                    } else {
-                        return response.createException().flatMapMany(Mono::error);
-                    }
-                });
+                .exchangeToFlux(response -> isHttpResponseOk(response) ? response.bodyToFlux(Message.class) :
+                        response.createException().flatMapMany(Mono::error));
     }
 
     private Flux<Message> getMessagesByRoomId(String roomId) {
         return datastoreClient.get().uri(String.format("/msg/%s", roomId))
                 .accept(MediaType.APPLICATION_NDJSON)
-                .exchangeToFlux(response -> {
-                    if (isHttpResponseOk(response)) {
-                        return response.bodyToFlux(Message.class);
-                    } else {
-                        return response.createException().flatMapMany(Mono::error);
-                    }
-                });
+                .exchangeToFlux(response -> isHttpResponseOk(response) ? response.bodyToFlux(Message.class) :
+                        response.createException().flatMapMany(Mono::error)
+                );
     }
 
     private boolean isHttpResponseOk(ClientResponse clientResponse) {
