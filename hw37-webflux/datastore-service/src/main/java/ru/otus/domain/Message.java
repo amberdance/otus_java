@@ -2,6 +2,7 @@ package ru.otus.domain;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.PersistenceCreator;
 import org.springframework.data.relational.core.mapping.Table;
@@ -10,6 +11,7 @@ import reactor.util.annotation.NonNull;
 @Table("message")
 @Getter
 @Setter
+@ToString
 public class Message {
 
     @Id
@@ -32,13 +34,4 @@ public class Message {
         this(null, roomId, msgText);
     }
 
-
-    @Override
-    public String toString() {
-        return "Message{" +
-                "id=" + id +
-                ", roomId='" + roomId + '\'' +
-                ", msgText='" + msgText + '\'' +
-                '}';
-    }
 }
