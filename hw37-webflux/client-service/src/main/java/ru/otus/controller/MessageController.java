@@ -16,7 +16,6 @@ import org.springframework.web.socket.messaging.SessionSubscribeEvent;
 import org.springframework.web.util.HtmlUtils;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import ru.otus.exception.ParseRoomException;
 import ru.otus.model.Message;
 
 import java.util.Objects;
@@ -60,11 +59,7 @@ public class MessageController {
     }
 
     private String parseRoomId(String simpDestination) {
-        try {
-            return simpDestination.replace(TOPIC_TEMPLATE, "");
-        } catch (Exception ex) {
-            throw new ParseRoomException("Cannot get roomId");
-        }
+        return simpDestination.replace(TOPIC_TEMPLATE, "");
     }
 
     private Mono<Long> saveMessage(String roomId, Message message) {
