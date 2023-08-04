@@ -8,7 +8,7 @@ public interface DataStoreService {
 
     Mono<Message> saveMessage(Message message);
 
-    Flux<Message> loadMessages(String roomId);
+    Flux<Message> findMessageByRoomId(String roomId);
 
-    Flux<Message> loadAllMessages(String roomId);
+    Flux<Message> findAllMessages(String roomId);
 }
