@@ -25,7 +25,7 @@ import ru.otus.model.Message;
 public class MessageController {
 
     private static final String TOPIC_TEMPLATE = "/topic/response.";
-    private static final long ROOM_1408 = 1408;
+    private static final long RESTRICTED_ROOM = 1408;
     private final WebClient datastoreClient;
     private final SimpMessagingTemplate template;
 
@@ -41,7 +41,7 @@ public class MessageController {
     }
 
     private boolean isRoomRestricted(String roomId) {
-        return parseRoomId(roomId) == ROOM_1408;
+        return parseRoomId(roomId) == RESTRICTED_ROOM;
     }
 
     private long parseRoomId(String simpDestination) {
@@ -65,7 +65,7 @@ public class MessageController {
 
         var roomId = parseRoomId(simpDestination);
 
-        (roomId == ROOM_1408 ? getMessagesForAllRooms() : getMessagesByRoomId(roomId))
+        (roomId == RESTRICTED_ROOM ? getMessagesForAllRooms() : getMessagesByRoomId(roomId))
                 .doOnError(ex -> log.error("Got messages for Room with id: {} failed", roomId, ex))
                 .subscribe(message -> template.convertAndSend(simpDestination, message));
     }
