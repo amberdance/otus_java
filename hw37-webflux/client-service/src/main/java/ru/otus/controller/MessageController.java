@@ -15,8 +15,8 @@ import org.springframework.web.socket.messaging.SessionSubscribeEvent;
 import org.springframework.web.util.HtmlUtils;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import ru.otus.model.Message;
 import ru.otus.exception.ChatException;
+import ru.otus.model.Message;
 
 @Controller
 @RequiredArgsConstructor

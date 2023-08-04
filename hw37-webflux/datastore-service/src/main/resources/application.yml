@@ -6,6 +6,7 @@ spring:
     url: r2dbc:postgresql://localhost:5430/webflux_db
     username: usr
     password: pwd
+
   flyway:
     url: jdbc:postgresql://localhost:5430/webflux_db
     user: usr
