@@ -10,6 +10,7 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.support.GenericMessage;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.socket.messaging.SessionSubscribeEvent;
 import org.springframework.web.util.HtmlUtils;
@@ -38,7 +39,7 @@ public class MessageController {
             return;
         }
 
-        saveMessage(roomId, message).subscribe(msgId -> log.info("Message saved with id:{}", msgId));
+        saveMessage(roomId, message).subscribe(msgId -> log.info("Message sent with id:{}", msgId));
         template.convertAndSend(String.format("%s%s", TOPIC_TEMPLATE, roomId), new Message(HtmlUtils.htmlEscape(message.message())));
     }
 
@@ -86,11 +87,11 @@ public class MessageController {
                 .exchangeToMono(response -> response.bodyToMono(Long.class));
     }
 
-    private Flux<Object> getMessagesForAllRooms() {
+    private Flux<Message> getMessagesForAllRooms() {
         return datastoreClient.get().uri("/msg/all")
                 .accept(MediaType.APPLICATION_NDJSON)
                 .exchangeToFlux(response -> {
-                    if (response.statusCode().equals(HttpStatus.OK)) {
+                    if (isHttpResponseOk(response)) {
                         return response.bodyToFlux(Message.class);
                     } else {
                         return response.createException().flatMapMany(Mono::error);
@@ -102,11 +103,16 @@ public class MessageController {
         return datastoreClient.get().uri(String.format("/msg/%s", roomId))
                 .accept(MediaType.APPLICATION_NDJSON)
                 .exchangeToFlux(response -> {
-                    if (response.statusCode().equals(HttpStatus.OK)) {
+                    if (isHttpResponseOk(response)) {
                         return response.bodyToFlux(Message.class);
                     } else {
                         return response.createException().flatMapMany(Mono::error);
                     }
                 });
     }
+
+    private boolean isHttpResponseOk(ClientResponse clientResponse) {
+        return clientResponse.statusCode().equals(HttpStatus.OK);
+    }
+
 }
