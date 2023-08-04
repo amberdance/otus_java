@@ -31,14 +31,14 @@ public class MessageController {
 
     @MessageMapping("/message.{roomId}")
     public void getMessage(@DestinationVariable String roomId, Message message) {
-        log.info("Get message:{}, roomId:{}", message, roomId);
+        log.info("Got message:{} from Room:{}", message, roomId);
 
         if (parseRoomId(roomId) == ROOM_1408) {
             log.info("Messages from room {} are prohibited", ROOM_1408);
             return;
         }
 
-        saveMessage(roomId, message).subscribe(msgId -> log.info("message send id:{}", msgId));
+        saveMessage(roomId, message).subscribe(msgId -> log.info("Message saved with id:{}", msgId));
         template.convertAndSend(String.format("%s%s", TOPIC_TEMPLATE, roomId), new Message(HtmlUtils.htmlEscape(message.message())));
     }
 
