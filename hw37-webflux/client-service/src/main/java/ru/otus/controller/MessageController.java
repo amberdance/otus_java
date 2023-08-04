@@ -25,7 +25,7 @@ import ru.otus.model.Message;
 public class MessageController {
 
     private static final String TOPIC_TEMPLATE = "/topic/response.";
-    private static final long RESTRICTED_ROOM = 1408;
+    private static final String RESTRICTED_ROOM = "1408";
     private final WebClient datastoreClient;
     private final SimpMessagingTemplate template;
 
@@ -35,23 +35,15 @@ public class MessageController {
             return;
         }
 
-        log.info("Got message:{} from Room:{}", message, roomId);
+        log.info("Got message: {} from room id: {}", message.message(), roomId);
         saveMessage(roomId, message).subscribe(msgId -> log.info("Message sent with id:{}", msgId));
         template.convertAndSend(String.format("%s%s", TOPIC_TEMPLATE, roomId), new Message(HtmlUtils.htmlEscape(message.message())));
     }
 
     private boolean isRoomRestricted(String roomId) {
-        return parseRoomId(roomId) == RESTRICTED_ROOM;
+        return roomId.equals(RESTRICTED_ROOM);
     }
 
-    private long parseRoomId(String simpDestination) {
-        try {
-            return Long.parseLong(simpDestination.replace(TOPIC_TEMPLATE, ""));
-        } catch (Exception ex) {
-            log.error("Cannot get roomId", ex);
-            throw new ChatException("Cannot get roomId");
-        }
-    }
 
     @EventListener
     public void handleSessionSubscribeEvent(SessionSubscribeEvent event) {
@@ -65,9 +57,17 @@ public class MessageController {
 
         var roomId = parseRoomId(simpDestination);
 
-        (roomId == RESTRICTED_ROOM ? getMessagesForAllRooms() : getMessagesByRoomId(roomId))
+        (isRoomRestricted(roomId) ? getMessagesForAllRooms() : getMessagesByRoomId(roomId))
                 .doOnError(ex -> log.error("Got messages for Room with id: {} failed", roomId, ex))
                 .subscribe(message -> template.convertAndSend(simpDestination, message));
+    }
+
+    private String parseRoomId(String simpDestination) {
+        try {
+            return simpDestination.replace(TOPIC_TEMPLATE, "");
+        } catch (Exception ex) {
+            throw new ChatException("Can not get roomId");
+        }
     }
 
     private Mono<Long> saveMessage(String roomId, Message message) {
@@ -89,7 +89,7 @@ public class MessageController {
                 });
     }
 
-    private Flux<Message> getMessagesByRoomId(long roomId) {
+    private Flux<Message> getMessagesByRoomId(String roomId) {
         return datastoreClient.get().uri(String.format("/msg/%s", roomId))
                 .accept(MediaType.APPLICATION_NDJSON)
                 .exchangeToFlux(response -> {
