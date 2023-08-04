@@ -19,7 +19,7 @@ import ru.otus.service.MessageService;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
-public class DataController {
+public class MessageController {
     private final MessageService messageService;
     private final Scheduler workerPool;
 
