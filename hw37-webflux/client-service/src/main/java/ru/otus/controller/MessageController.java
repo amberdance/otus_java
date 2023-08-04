@@ -28,7 +28,7 @@ public class MessageController {
     private static final String TOPIC_TEMPLATE = "/topic/response.";
     private static final String RESTRICTED_ROOM = "1408";
     private final WebClient webClient;
-    private final SimpMessagingTemplate template;
+    private final SimpMessagingTemplate messagingTemplate;
 
     @MessageMapping("/message.{roomId}")
     public void getMessage(@DestinationVariable String roomId, Message message) {
@@ -45,7 +45,7 @@ public class MessageController {
     }
 
     private void sendMessage(String roomId, Message message) {
-        template.convertAndSend(String.format("%s%s", TOPIC_TEMPLATE, roomId),
+        messagingTemplate.convertAndSend(String.format("%s%s", TOPIC_TEMPLATE, roomId),
                 new Message(HtmlUtils.htmlEscape(message.message())));
     }
 
@@ -61,7 +61,7 @@ public class MessageController {
         var fluxMessages = isRoomRestricted(roomId) ? getMessagesForAllRooms() : getMessagesByRoomId(roomId);
 
         fluxMessages.doOnError(ex -> log.error("Error occurred while getting messages", ex))
-                .subscribe(message -> template.convertAndSend(simpDestination, message));
+                .subscribe(message -> messagingTemplate.convertAndSend(simpDestination, message));
     }
 
     private String parseRoomId(String simpDestination) {
