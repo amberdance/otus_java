@@ -45,19 +45,17 @@ public class DataController {
     public Flux<MessageDto> getMessagesByRoomId(@PathVariable("roomId") String roomId) {
         return Mono.just(roomId)
                 .doOnNext(room -> log.info("Got message by room id: {}", room))
-                .flatMapMany(dataStoreService::findMessageByRoomId)
+                .flatMapMany(dataStoreService::findMessagesByRoomId)
                 .map(message -> new MessageDto(message.getMsgText()))
-                .doOnNext(msgDto -> log.info("Converted message to dto: {}", msgDto))
+                .doOnNext(msgDto -> log.info("Message: {}", msgDto))
                 .subscribeOn(workerPool);
     }
 
     @GetMapping(value = "/msg/all", produces = MediaType.APPLICATION_NDJSON_VALUE)
     public Flux<MessageDto> getAllMassages() {
-        return Mono.just("all")
-                .doOnNext(room -> log.info("Getting all messages, room: {}", room))
-                .flatMapMany(dataStoreService::findAllMessages)
+        return dataStoreService.findAllMessages()
                 .map(message -> new MessageDto(message.getMsgText()))
-                .doOnNext(msgDto -> log.info("Converted message to dto: {}", msgDto))
+                .doOnNext(msgDto -> log.info("All messages: {}", msgDto))
                 .subscribeOn(workerPool);
     }
 }
