@@ -55,7 +55,7 @@ public class MessageController {
         var roomId = parseRoomId(simpDestination);
         var fluxMessages = isRoomRestricted(roomId) ? getMessagesForAllRooms() : getMessagesByRoomId(roomId);
 
-        fluxMessages.doOnError(ex -> log.error("Getting fluxMessages for roomId:{} failed", roomId, ex))
+        fluxMessages.doOnError(ex -> log.error("Error occurred while getting messages", ex))
                 .subscribe(message -> template.convertAndSend(simpDestination, message));
     }
 
