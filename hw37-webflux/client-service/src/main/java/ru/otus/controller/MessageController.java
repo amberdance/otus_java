@@ -54,21 +54,15 @@ public class MessageController {
         var simpDestination = (String) genericMessage.getHeaders().get("simpDestination");
 
         if (simpDestination == null) {
-            log.error("Cannot get simpDestination header, headers:{}", genericMessage.getHeaders());
+            log.error("Cannot get simpDestination header, headers: {}", genericMessage.getHeaders());
             throw new ChatException("Cannot get simpDestination header");
         }
 
         var roomId = parseRoomId(simpDestination);
 
-        if (roomId == ROOM_1408) {
-            getMessagesForAllRooms()
-                    .doOnError(ex -> log.error("Getting messages for roomId:{} failed", roomId, ex))
-                    .subscribe(message -> template.convertAndSend(simpDestination, message));
-        } else {
-            getMessagesByRoomId(roomId)
-                    .doOnError(ex -> log.error("Getting messages for roomId:{} failed", roomId, ex))
-                    .subscribe(message -> template.convertAndSend(simpDestination, message));
-        }
+        (roomId == ROOM_1408 ? getMessagesForAllRooms() : getMessagesByRoomId(roomId))
+                .doOnError(ex -> log.error("Got messages for Room with id: {} failed", roomId, ex))
+                .subscribe(message -> template.convertAndSend(simpDestination, message));
     }
 
     private long parseRoomId(String simpDestination) {
