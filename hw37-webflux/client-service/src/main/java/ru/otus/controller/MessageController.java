@@ -27,7 +27,7 @@ public class MessageController {
 
     private static final String TOPIC_TEMPLATE = "/topic/response.";
     private static final String RESTRICTED_ROOM = "1408";
-    private final WebClient datastoreClient;
+    private final WebClient webClient;
     private final SimpMessagingTemplate template;
 
     @MessageMapping("/message.{roomId}")
@@ -69,7 +69,7 @@ public class MessageController {
     }
 
     private Mono<Long> saveMessage(String roomId, Message message) {
-        return datastoreClient.post().uri(String.format("/msg/%s", roomId))
+        return webClient.post().uri(String.format("/msg/%s", roomId))
                 .accept(MediaType.APPLICATION_JSON)
                 .bodyValue(message)
                 .exchangeToMono(response -> response.bodyToMono(Long.class))
@@ -77,14 +77,14 @@ public class MessageController {
     }
 
     private Flux<Message> getMessagesForAllRooms() {
-        return datastoreClient.get().uri("/msg/all")
+        return webClient.get().uri("/msg/all")
                 .accept(MediaType.APPLICATION_NDJSON)
                 .exchangeToFlux(response -> isHttpResponseOk(response) ? response.bodyToFlux(Message.class) :
                         response.createException().flatMapMany(Mono::error));
     }
 
     private Flux<Message> getMessagesByRoomId(String roomId) {
-        return datastoreClient.get().uri(String.format("/msg/%s", roomId))
+        return webClient.get().uri(String.format("/msg/%s", roomId))
                 .accept(MediaType.APPLICATION_NDJSON)
                 .exchangeToFlux(response -> isHttpResponseOk(response) ? response.bodyToFlux(Message.class) :
                         response.createException().flatMapMany(Mono::error));
