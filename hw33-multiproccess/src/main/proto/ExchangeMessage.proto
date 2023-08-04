@@ -1,0 +1,16 @@
+syntax = "proto3";
+package ru.otus;
+option java_multiple_files = true;
+
+message ExchangeMessageRequest {
+  int32 firstValue = 1;
+  int32 lastValue = 3;
+}
+
+message ExchangeMessageResponse {
+  int32 value = 1;
+}
+
+service ExchangeService {
+  rpc send(ExchangeMessageRequest) returns (stream ExchangeMessageResponse);
+}

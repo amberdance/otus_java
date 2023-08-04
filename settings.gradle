@@ -11,5 +11,5 @@
 
 rootProject.name = 'otusJava'
 
-include 'hw32-concurent:ConcurrentCollections'
-include 'hw32-concurent:QueueDemo'
+include 'hw33-multiproccess'
+
