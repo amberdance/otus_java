@@ -31,19 +31,16 @@ public class MessageController {
 
     @MessageMapping("/message.{roomId}")
     public void getMessage(@DestinationVariable String roomId, Message message) {
-        log.info("get message:{}, roomId:{}", message, roomId);
+        log.info("Get message:{}, roomId:{}", message, roomId);
 
         if (parseRoomId(roomId) == ROOM_1408) {
             log.info("Messages from room {} are prohibited", ROOM_1408);
             return;
         }
 
+        saveMessage(roomId, message).subscribe(msgId -> log.info("message send id:{}", msgId));
 
-        saveMessage(roomId, message)
-                .subscribe(msgId -> log.info("message send id:{}", msgId));
-
-        template.convertAndSend(String.format("%s%s", TOPIC_TEMPLATE, roomId),
-                new Message(HtmlUtils.htmlEscape(message.message())));
+        template.convertAndSend(String.format("%s%s", TOPIC_TEMPLATE, roomId), new Message(HtmlUtils.htmlEscape(message.message())));
     }
 
 
@@ -51,20 +48,21 @@ public class MessageController {
     public void handleSessionSubscribeEvent(SessionSubscribeEvent event) {
         var genericMessage = (GenericMessage<byte[]>) event.getMessage();
         var simpDestination = (String) genericMessage.getHeaders().get("simpDestination");
+
         if (simpDestination == null) {
-            log.error("Can not get simpDestination header, headers:{}", genericMessage.getHeaders());
-            throw new ChatException("Can not get simpDestination header");
+            log.error("Cannot get simpDestination header, headers:{}", genericMessage.getHeaders());
+            throw new ChatException("Cannot get simpDestination header");
         }
 
         var roomId = parseRoomId(simpDestination);
 
         if (roomId == ROOM_1408) {
             getMessagesForAllRooms()
-                    .doOnError(ex -> log.error("getting messages for roomId:{} failed", roomId, ex))
+                    .doOnError(ex -> log.error("Getting messages for roomId:{} failed", roomId, ex))
                     .subscribe(message -> template.convertAndSend(simpDestination, message));
         } else {
             getMessagesByRoomId(roomId)
-                    .doOnError(ex -> log.error("getting messages for roomId:{} failed", roomId, ex))
+                    .doOnError(ex -> log.error("Getting messages for roomId:{} failed", roomId, ex))
                     .subscribe(message -> template.convertAndSend(simpDestination, message));
         }
     }
@@ -74,7 +72,7 @@ public class MessageController {
             return Long.parseLong(simpDestination.replace(TOPIC_TEMPLATE, ""));
         } catch (Exception ex) {
             log.error("Cannot get roomId", ex);
-            throw new ChatException("Can not get roomId");
+            throw new ChatException("Cannot get roomId");
         }
     }
 
