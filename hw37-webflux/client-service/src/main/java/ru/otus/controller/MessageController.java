@@ -21,8 +21,8 @@ import ru.otus.model.Message;
 import java.util.Objects;
 
 @Controller
-@Slf4j
 @RequiredArgsConstructor
+@Slf4j
 public class MessageController {
 
     private static final String TOPIC_TEMPLATE = "/topic/response.";
