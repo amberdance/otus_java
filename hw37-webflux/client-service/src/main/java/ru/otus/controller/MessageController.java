@@ -44,6 +44,12 @@ public class MessageController {
         return roomId.equals(RESTRICTED_ROOM);
     }
 
+    private void sendMessage(String roomId, Message message) {
+        template.convertAndSend(String.format("%s%s", TOPIC_TEMPLATE, roomId),
+                new Message(HtmlUtils.htmlEscape(message.message())));
+    }
+
+
     @EventListener
     public void handleSubscribeEventAction(SessionSubscribeEvent event) {
         var genericMessage = (GenericMessage<byte[]>) event.getMessage();
@@ -86,11 +92,6 @@ public class MessageController {
 
     private boolean isHttpResponseOk(ClientResponse clientResponse) {
         return clientResponse.statusCode().equals(HttpStatus.OK);
-    }
-
-    private void sendMessage(String roomId, Message message) {
-        template.convertAndSend(String.format("%s%s", TOPIC_TEMPLATE, roomId),
-                new Message(HtmlUtils.htmlEscape(message.message())));
     }
 
 }
