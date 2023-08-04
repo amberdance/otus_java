@@ -46,7 +46,7 @@ public class MessageController {
     }
 
     @EventListener
-    public void handleSessionSubscribeEvent(SessionSubscribeEvent event) {
+    public void handleSubscribeEventAction(SessionSubscribeEvent event) {
         var genericMessage = (GenericMessage<byte[]>) event.getMessage();
         var simpDestination = (String) genericMessage.getHeaders().get("simpDestination");
 
