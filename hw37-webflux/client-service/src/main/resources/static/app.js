@@ -1,9 +1,7 @@
 let stompClient = null;
-
-const chatLineElementId = "chatLine";
-const roomIdElementId = "roomId";
-const messageElementId = "message";
-
+const CHAT_LINE_SELECTOR = "chatLine";
+const ROOM_ID_SELECTOR = "roomId";
+const MESSAGE_SELECTOR = "message";
 
 const setConnected = (connected) => {
     const connectBtn = document.getElementById("connect");
@@ -11,7 +9,7 @@ const setConnected = (connected) => {
 
     connectBtn.disabled = connected;
     disconnectBtn.disabled = !connected;
-    const chatLine = document.getElementById(chatLineElementId);
+    const chatLine = document.getElementById(CHAT_LINE_SELECTOR);
     chatLine.hidden = !connected;
 }
 
@@ -20,8 +18,9 @@ const connect = () => {
     stompClient.connect({}, (frame) => {
         setConnected(true);
 
-        const roomId = document.getElementById(roomIdElementId).value;
+        const roomId = document.getElementById(ROOM_ID_SELECTOR).value;
         console.log(`Connected to roomId: ${roomId} frame:${frame}`);
+
         stompClient.subscribe(`/topic/response.${roomId}`, (message) => showMessage(JSON.parse(message.body).message));
     });
 }
@@ -30,20 +29,22 @@ const disconnect = () => {
     if (stompClient !== null) {
         stompClient.disconnect();
     }
+
     setConnected(false);
-    console.log("Disconnected");
 }
 
 const sendMsg = () => {
-    const roomId = document.getElementById(roomIdElementId).value;
-    const message = document.getElementById(messageElementId).value;
+    const roomId = document.getElementById(ROOM_ID_SELECTOR).value;
+    const message = document.getElementById(MESSAGE_SELECTOR).value;
+
     stompClient.send(`/app/message.${roomId}`, {}, JSON.stringify({'message': message}))
 }
 
 const showMessage = (message) => {
-    const chatLine = document.getElementById(chatLineElementId);
-    let newRow = chatLine.insertRow(-1);
-    let newCell = newRow.insertCell(0);
-    let newText = document.createTextNode(message);
+    const chatLine = document.getElementById(CHAT_LINE_SELECTOR);
+    const newRow = chatLine.insertRow(-1);
+    const newCell = newRow.insertCell(0);
+    const newText = document.createTextNode(message);
+
     newCell.appendChild(newText);
 }
