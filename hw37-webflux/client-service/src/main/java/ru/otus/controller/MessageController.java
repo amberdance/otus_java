@@ -25,7 +25,7 @@ public class MessageController {
 
 
     private static final String TOPIC_TEMPLATE = "/topic/response.";
-    private final long ROOM_1408 = 1408;
+    private static final long ROOM_1408 = 1408;
     private final WebClient datastoreClient;
     private final SimpMessagingTemplate template;
 
@@ -39,7 +39,6 @@ public class MessageController {
         }
 
         saveMessage(roomId, message).subscribe(msgId -> log.info("message send id:{}", msgId));
-
         template.convertAndSend(String.format("%s%s", TOPIC_TEMPLATE, roomId), new Message(HtmlUtils.htmlEscape(message.message())));
     }
 
