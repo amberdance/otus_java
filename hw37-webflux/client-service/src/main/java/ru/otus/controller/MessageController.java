@@ -16,8 +16,10 @@ import org.springframework.web.socket.messaging.SessionSubscribeEvent;
 import org.springframework.web.util.HtmlUtils;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import ru.otus.exception.ChatException;
+import ru.otus.exception.ParseRoomException;
 import ru.otus.model.Message;
+
+import java.util.Objects;
 
 @Controller
 @Slf4j
@@ -31,15 +33,14 @@ public class MessageController {
 
     @MessageMapping("/message.{roomId}")
     public void getMessage(@DestinationVariable String roomId, Message message) {
-        log.info("Got message: {} from room id: {}", message.message(), roomId);
-        saveMessage(roomId, message).subscribe(msgId -> log.info("Message sent with id:{}", msgId));
-
         if (isRoomRestricted(roomId)) {
             return;
         }
 
         template.convertAndSend(String.format("%s%s", TOPIC_TEMPLATE, roomId),
                 new Message(HtmlUtils.htmlEscape(message.message())));
+        log.info("Got message: {} from room id: {}", message.message(), roomId);
+        saveMessage(roomId, message).subscribe(msgId -> log.info("Message sent with id:{}", msgId));
     }
 
     private boolean isRoomRestricted(String roomId) {
@@ -51,29 +52,20 @@ public class MessageController {
         var genericMessage = (GenericMessage<byte[]>) event.getMessage();
         var simpDestination = (String) genericMessage.getHeaders().get("simpDestination");
 
-        if (simpDestination == null) {
-            log.error("Cannot get simpDestination header, headers: {}", genericMessage.getHeaders());
-            throw new ChatException("Cannot get simpDestination header");
-        }
+        Objects.requireNonNull(simpDestination);
 
         var roomId = parseRoomId(simpDestination);
+        var messages = isRoomRestricted(roomId) ? getMessagesForAllRooms() : getMessagesByRoomId(roomId);
 
-        if (isRoomRestricted(roomId)) {
-            getMessagesForAllRooms()
-                    .doOnError(ex -> log.error("Getting messages for roomId:{} failed", roomId, ex))
-                    .subscribe(message -> template.convertAndSend(simpDestination, message));
-        } else {
-            getMessagesByRoomId(roomId)
-                    .doOnError(ex -> log.error("Getting messages for roomId:{} failed", roomId, ex))
-                    .subscribe(message -> template.convertAndSend(simpDestination, message));
-        }
+        messages.doOnError(ex -> log.error("Getting messages for roomId:{} failed", roomId, ex))
+                .subscribe(message -> template.convertAndSend(simpDestination, message));
     }
 
     private String parseRoomId(String simpDestination) {
         try {
             return simpDestination.replace(TOPIC_TEMPLATE, "");
         } catch (Exception ex) {
-            throw new ChatException("Can not get roomId");
+            throw new ParseRoomException("Cannot get roomId");
         }
     }
 
@@ -95,8 +87,7 @@ public class MessageController {
         return datastoreClient.get().uri(String.format("/msg/%s", roomId))
                 .accept(MediaType.APPLICATION_NDJSON)
                 .exchangeToFlux(response -> isHttpResponseOk(response) ? response.bodyToFlux(Message.class) :
-                        response.createException().flatMapMany(Mono::error)
-                );
+                        response.createException().flatMapMany(Mono::error));
     }
 
     private boolean isHttpResponseOk(ClientResponse clientResponse) {
