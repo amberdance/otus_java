@@ -24,7 +24,6 @@ import ru.otus.model.Message;
 @RequiredArgsConstructor
 public class MessageController {
 
-
     private static final String TOPIC_TEMPLATE = "/topic/response.";
     private static final long ROOM_1408 = 1408;
     private final WebClient datastoreClient;
@@ -32,13 +31,11 @@ public class MessageController {
 
     @MessageMapping("/message.{roomId}")
     public void getMessage(@DestinationVariable String roomId, Message message) {
-        log.info("Got message:{} from Room:{}", message, roomId);
-
         if (isRoomRestricted(roomId)) {
-            log.info("Messages from room {} are prohibited", ROOM_1408);
             return;
         }
 
+        log.info("Got message:{} from Room:{}", message, roomId);
         saveMessage(roomId, message).subscribe(msgId -> log.info("Message sent with id:{}", msgId));
         template.convertAndSend(String.format("%s%s", TOPIC_TEMPLATE, roomId), new Message(HtmlUtils.htmlEscape(message.message())));
     }
@@ -47,6 +44,14 @@ public class MessageController {
         return parseRoomId(roomId) == ROOM_1408;
     }
 
+    private long parseRoomId(String simpDestination) {
+        try {
+            return Long.parseLong(simpDestination.replace(TOPIC_TEMPLATE, ""));
+        } catch (Exception ex) {
+            log.error("Cannot get roomId", ex);
+            throw new ChatException("Cannot get roomId");
+        }
+    }
 
     @EventListener
     public void handleSessionSubscribeEvent(SessionSubscribeEvent event) {
@@ -63,15 +68,6 @@ public class MessageController {
         (roomId == ROOM_1408 ? getMessagesForAllRooms() : getMessagesByRoomId(roomId))
                 .doOnError(ex -> log.error("Got messages for Room with id: {} failed", roomId, ex))
                 .subscribe(message -> template.convertAndSend(simpDestination, message));
-    }
-
-    private long parseRoomId(String simpDestination) {
-        try {
-            return Long.parseLong(simpDestination.replace(TOPIC_TEMPLATE, ""));
-        } catch (Exception ex) {
-            log.error("Cannot get roomId", ex);
-            throw new ChatException("Cannot get roomId");
-        }
     }
 
     private Mono<Long> saveMessage(String roomId, Message message) {
