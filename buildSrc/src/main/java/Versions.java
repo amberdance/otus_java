@@ -6,7 +6,6 @@ public interface Versions {
 
     String lombok = "1.18.26";
     String gson = "2.10.1";
-    String jackson = "2.15.2";
 
     String mongodb = "4.9.0";
     String mongodbReactive = "4.9.0";
@@ -28,4 +27,6 @@ public interface Versions {
     String errorProneAnnotations = "2.11.0";
     String tomcatAnnotationsApi = "6.0.53";
     String grpc = "1.44.1";
+    String wiremock = "3.0.0-beta-2";
+    String r2dbcPostgresql = "0.8.13.RELEASE";
 }
