@@ -57,9 +57,15 @@ public class MessageController {
 
         var roomId = parseRoomId(simpDestination);
 
-        (isRoomRestricted(roomId) ? getMessagesForAllRooms() : getMessagesByRoomId(roomId))
-                .doOnError(ex -> log.error("Got messages for Room with id: {} failed", roomId, ex))
-                .subscribe(message -> template.convertAndSend(simpDestination, message));
+        if (isRoomRestricted(roomId)) {
+            getMessagesForAllRooms()
+                    .doOnError(ex -> log.error("Getting messages for roomId:{} failed", roomId, ex))
+                    .subscribe(message -> template.convertAndSend(simpDestination, message));
+        } else {
+            getMessagesByRoomId(roomId)
+                    .doOnError(ex -> log.error("Getting messages for roomId:{} failed", roomId, ex))
+                    .subscribe(message -> template.convertAndSend(simpDestination, message));
+        }
     }
 
     private String parseRoomId(String simpDestination) {
