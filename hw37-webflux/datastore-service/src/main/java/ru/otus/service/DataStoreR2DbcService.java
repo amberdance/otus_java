@@ -20,12 +20,12 @@ public class DataStoreR2DbcService implements DataStoreService {
     }
 
     @Override
-    public Flux<Message> findMessageByRoomId(String roomId) {
+    public Flux<Message> findMessagesByRoomId(String roomId) {
         return messageRepository.findByRoomId(roomId);
     }
 
     @Override
-    public Flux<Message> findAllMessages(String roomId) {
+    public Flux<Message> findAllMessages() {
         return messageRepository.findAll();
     }
 }
