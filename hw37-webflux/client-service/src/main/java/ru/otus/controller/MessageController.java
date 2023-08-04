@@ -33,13 +33,17 @@ public class MessageController {
     public void getMessage(@DestinationVariable String roomId, Message message) {
         log.info("Got message:{} from Room:{}", message, roomId);
 
-        if (parseRoomId(roomId) == ROOM_1408) {
+        if (isRoomRestricted(roomId)) {
             log.info("Messages from room {} are prohibited", ROOM_1408);
             return;
         }
 
         saveMessage(roomId, message).subscribe(msgId -> log.info("Message saved with id:{}", msgId));
         template.convertAndSend(String.format("%s%s", TOPIC_TEMPLATE, roomId), new Message(HtmlUtils.htmlEscape(message.message())));
+    }
+
+    private boolean isRoomRestricted(String roomId) {
+        return parseRoomId(roomId) == ROOM_1408;
     }
 
 
