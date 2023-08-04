@@ -8,7 +8,7 @@ import ru.otus.domain.Message;
 
 public interface MessageRepository extends ReactiveCrudRepository<Message, Long> {
 
-    @Query("select * from message where room_id = :room_id order by id")
+    @Query("select id, room_id, msg_text from message where room_id = :room_id order by id desc")
     Flux<Message> findByRoomId(@Param("roomId") String roomId);
 
 }
