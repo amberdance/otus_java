@@ -4,20 +4,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Scheduler;
 import ru.otus.domain.Message;
 import ru.otus.repository.MessageRepository;
-
-import java.time.Duration;
-
-import static java.time.temporal.ChronoUnit.SECONDS;
 
 @Service
 @RequiredArgsConstructor
 public class DataStoreR2DbcService implements DataStoreService {
 
     private final MessageRepository messageRepository;
-    private final Scheduler workerPool;
 
 
     @Override
@@ -27,11 +21,11 @@ public class DataStoreR2DbcService implements DataStoreService {
 
     @Override
     public Flux<Message> findMessageByRoomId(String roomId) {
-        return messageRepository.findByRoomId(roomId).delayElements(Duration.of(1, SECONDS), workerPool);
+        return messageRepository.findByRoomId(roomId);
     }
 
     @Override
     public Flux<Message> findAllMessages(String roomId) {
-        return messageRepository.findAll().delayElements(Duration.of(1, SECONDS), workerPool);
+        return messageRepository.findAll();
     }
 }
