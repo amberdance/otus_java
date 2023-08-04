@@ -4,7 +4,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import ru.otus.domain.Message;
 
-public interface DataStoreService {
+public interface MessageService {
 
     Mono<Message> saveMessage(Message message);
 

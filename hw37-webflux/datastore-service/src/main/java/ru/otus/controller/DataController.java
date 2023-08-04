@@ -14,13 +14,13 @@ import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Scheduler;
 import ru.otus.domain.Message;
 import ru.otus.domain.MessageDto;
-import ru.otus.service.DataStoreService;
+import ru.otus.service.MessageService;
 
 @RestController
 @RequiredArgsConstructor
 @Slf4j
 public class DataController {
-    private final DataStoreService dataStoreService;
+    private final MessageService messageService;
     private final Scheduler workerPool;
 
 
@@ -30,7 +30,7 @@ public class DataController {
         var message = messageDto.message();
         var msgId = Mono.just(new Message(roomId, message))
                 .doOnNext(msg -> log.info("Got message: {}", msg))
-                .flatMap(dataStoreService::saveMessage)
+                .flatMap(messageService::saveMessage)
                 .publishOn(workerPool)
                 .doOnNext(msgSaved -> log.info("Message saved with id: {}", msgSaved.getId()))
                 .map(Message::getId)
@@ -45,7 +45,7 @@ public class DataController {
     public Flux<MessageDto> getMessagesByRoomId(@PathVariable("roomId") String roomId) {
         return Mono.just(roomId)
                 .doOnNext(room -> log.info("Got message by room id: {}", room))
-                .flatMapMany(dataStoreService::findMessagesByRoomId)
+                .flatMapMany(messageService::findMessagesByRoomId)
                 .map(message -> new MessageDto(message.getMsgText()))
                 .doOnNext(msgDto -> log.info("Message: {}", msgDto))
                 .subscribeOn(workerPool);
@@ -53,7 +53,7 @@ public class DataController {
 
     @GetMapping(value = "/msg/all", produces = MediaType.APPLICATION_NDJSON_VALUE)
     public Flux<MessageDto> getAllMassages() {
-        return dataStoreService.findAllMessages()
+        return messageService.findAllMessages()
                 .map(message -> new MessageDto(message.getMsgText()))
                 .doOnNext(msgDto -> log.info("All messages: {}", msgDto))
                 .subscribeOn(workerPool);

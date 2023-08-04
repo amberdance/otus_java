@@ -9,7 +9,7 @@ import ru.otus.repository.MessageRepository;
 
 @Service
 @RequiredArgsConstructor
-public class DataStoreR2DbcService implements DataStoreService {
+public class R2DbcMessageService implements MessageService {
 
     private final MessageRepository messageRepository;
 
